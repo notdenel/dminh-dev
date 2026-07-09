@@ -25,5 +25,30 @@ const {
     <div class="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-5 py-6 sm:px-6 sm:py-8">
       <slot />
     </div>
+
+    <!-- global script to handle back buttons across site -->
+    <script>
+      // event delegation to record click on any class
+      document.body.addEventListener('click', (event) => {
+        // find closest ancestor that's an anchor tag
+        const target = event.target as HTMLElement;
+        const backButton = target.closest('a.back-button');
+        
+        if (backButton && document.referrer) {
+          try {
+            const referrerOrigin = new URL(document.referrer).origin;
+            const currentOrigin = window.location.origin;
+
+            // only intercept if from own domain
+            if (referrerOrigin === currentOrigin) {
+              event.preventDefault();
+              history.back();
+            }
+          } catch (error) {
+            // URL parsing failed -> fallback href to home
+          }
+        }
+      });
+    </script>
   </body>
 </html>

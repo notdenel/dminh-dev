@@ -1,0 +1,72 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<BaseLayout
+    title="blog | dminh.dev"
+    description="notes, project writeups, and thoughts by daniel sims"
+>
+    <Header />
+
+    <main class="flex-1">
+        <section class="space-y-4">
+            <a href="/" class="back-button text-sm text-zinc-500 hover:text-zinc-300">
+                ← back
+            </a>
+
+            <h1
+                class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
+            >
+                blog
+            </h1>
+
+            <p class="max-w-2xl leading-7 text-zinc-400">
+                a small collection of notes, project writeups, and thoughts on
+                things i’m learning or building. for now, this is mostly a
+                placeholder while the site takes shape.
+            </p>
+        </section>
+
+        <section class="mt-12 space-y-4">
+            <article class="rounded-lg border border-zinc-800 p-5">
+                <p class="mb-2 text-sm text-zinc-500">coming soon</p>
+
+                <h2 class="font-medium text-zinc-100">
+                    building my cybersecurity home lab
+                </h2>
+
+                <p class="mt-2 leading-7 text-zinc-400">
+                    notes on setting up an isolated lab for networking, traffic
+                    analysis, dns filtering, and defensive security practice.
+                </p>
+            </article>
+
+            <article class="rounded-lg border border-zinc-800 p-5">
+                <p class="mb-2 text-sm text-zinc-500">coming soon</p>
+
+                <h2 class="font-medium text-zinc-100">
+                    what building a compiler taught me about systems
+                </h2>
+
+                <p class="mt-2 leading-7 text-zinc-400">
+                    reflections on parsing, semantic analysis, code generation,
+                    assembly, and debugging programs from the bottom up.
+                </p>
+            </article>
+
+            <article class="rounded-lg border border-zinc-800 p-5">
+                <p class="mb-2 text-sm text-zinc-500">coming soon</p>
+
+                <h2 class="font-medium text-zinc-100">welcome to my blog</h2>
+
+                <p class="mt-2 leading-7 text-zinc-400">
+                    a space where i yap about whatever!
+                </p>
+            </article>
+        </section>
+    </main>
+
+    <Footer />
+</BaseLayout>
