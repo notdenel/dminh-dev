@@ -11,10 +11,7 @@ const {
   class: className = "",
 } = Astro.props;
 
-const classes = [
-  "back-button text-sm text-zinc-500 hover:text-zinc-300",
-  className,
-]
+const classes = ["back-button site-link text-sm", className]
   .filter(Boolean)
   .join(" ");
 ---

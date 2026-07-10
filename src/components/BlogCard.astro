@@ -9,13 +9,13 @@ type Props = {
 const { title, description, status = "coming soon", href } = Astro.props;
 ---
 
-<article class="rounded-lg border border-zinc-800 p-5 transition-colors hover:border-zinc-700">
+<article class="card-surface rounded-lg border p-5">
     {status && <p class="mb-2 text-sm text-zinc-500">{status}</p>}
 
     {
         href ? (
             <h3 class="font-medium text-zinc-100">
-                <a href={href} class="hover:text-zinc-300">
+                <a href={href} class="site-link-strong">
                     {title}
                 </a>
             </h3>
