@@ -10,30 +10,50 @@ const {
   title = "dminh.dev",
   description = "personal dev site of daniel sims",
 } = Astro.props;
+
+const siteUrl = "https://dminh.dev";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+
+    <link rel="canonical" href={canonicalUrl} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="dminh.dev" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <meta name="theme-color" content="#09090b" />
+
     <title>{title}</title>
   </head>
 
   <body class="min-h-screen bg-zinc-950 text-zinc-100 antialiased">
-    <div class="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-5 py-6 sm:px-6 sm:py-8">
+    <div
+      class="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-5 py-6 sm:px-6 sm:py-8"
+    >
       <slot />
     </div>
 
     <!-- global script to handle back buttons across site -->
     <script>
       // event delegation to record back button click
-      document.body.addEventListener('click', (event) => {
+      document.body.addEventListener("click", (event) => {
         // find closest ancestor that's an anchor tag
         const target = event.target as HTMLElement;
-        const backButton = target.closest('a.back-button');
-        
+        const backButton = target.closest("a.back-button");
+
         if (backButton && document.referrer) {
           try {
             const referrerOrigin = new URL(document.referrer).origin;
