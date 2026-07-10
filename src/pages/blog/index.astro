@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import BlogCard from "../../components/BlogCard.astro";
+import { blogPosts } from "../../data/blog";
 ---
 
 <BaseLayout
@@ -36,20 +37,16 @@ import BlogCard from "../../components/BlogCard.astro";
         </section>
 
         <section class="mt-12 space-y-4">
-            <BlogCard
-                title="building my cybersecurity home lab"
-                description="notes on setting up an isolated lab for networking, traffic analysis, dns filtering, and defensive security practice."
-            />
-
-            <BlogCard
-                title="what building a compiler taught be about systems"
-                description="reflections on parsing, semantic analysis, code generation, assembly, and debugging programs from the bottom up."
-            />
-
-            <BlogCard
-                title="welcome to my blog"
-                description="a space where i yap about whatever!"
-            />
+            {
+                blogPosts.map((post) => (
+                    <BlogCard
+                        title={post.title}
+                        description={post.description}
+                        status={post.status}
+                        href={post.href}
+                    />
+                ))
+            }
         </section>
     </main>
 

@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import ProjectCard from "../../components/ProjectCard.astro";
+import { projects } from "../../data/projects";
 ---
 
 <BaseLayout
@@ -37,29 +38,16 @@ import ProjectCard from "../../components/ProjectCard.astro";
         </section>
 
         <section class="mt-12 space-y-4">
-            <ProjectCard
-                title="cybersecurity home lab"
-                description="an isolated lab using linux and windows virtual machines, vmware, wireshark, and pi-hole to practice networking, traffic analysis, dns-level filtering, and defensive workflows."
-                tags={["vmware", "linux", "windows", "wireshark", "pi-hole"]}
-            />
-
-            <ProjectCard
-                title="simple c compiler"
-                description="a multi-phase compiler for a subset of c, including lexical analysis, parsing, semantic analysis, scoped symbol tables, type checking, and x86/linux assembly generation."
-                tags={["c++", "x86 assembly", "linux", "gdb"]}
-            />
-
-            <ProjectCard
-                title="multi-agent robot formation control"
-                description="a senior capstone project involving decentralized robot formation control, matlab/simulink simulation, ros 2 integration, slam/amcl localization, and ekf-based pose estimation."
-                tags={[
-                    "ros 2",
-                    "matlab/simulink",
-                    "slam/amcl",
-                    "ekf",
-                    "raspberry pi",
-                ]}
-            />
+            {
+                projects.map((project) => (
+                    <ProjectCard
+                        title={project.title}
+                        description={project.description}
+                        tags={project.tags}
+                        href={project.href}
+                    />
+                ))
+            }
         </section>
     </main>
 
