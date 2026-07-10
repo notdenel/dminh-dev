@@ -2,12 +2,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import BlogCard from "../components/BlogCard.astro";
+import ProjectCard from "../components/ProjectCard.astro";
 ---
 
-<BaseLayout
-  title="dminh.dev"
-  description="personal dev site of daniel sims"
->
+<BaseLayout title="dminh.dev" description="personal dev site of daniel sims">
   <Header />
 
   <main class="flex-1">
@@ -15,7 +14,9 @@ import Footer from "../components/Footer.astro";
       <!-- <p class="text-sm text-zinc-500">personal site / home</p> -->
 
       <div class="space-y-4">
-        <h1 class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl">
+        <h1
+          class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
+        >
           hi, i'm daniel!
         </h1>
 
@@ -24,11 +25,6 @@ import Footer from "../components/Footer.astro";
           and am currently navigating the world of cybersecurity, systems, and
           software. i enjoy understanding why things work, bend, or break.
         </p>
-
-        <!-- <p class="max-w-2xl leading-7 text-zinc-400">
-          i like puzzles, computers, games, networks, and understanding why
-          things work, bend, or break.
-        </p> -->
       </div>
     </section>
 
@@ -42,7 +38,9 @@ import Footer from "../components/Footer.astro";
         <li>studying for my network+ and security+ exams</li>
         <li>making fun projects</li>
         <li>learning how to play hockey</li>
-        <li>looking for entry-level cybersecurity and software engineering roles</li>
+        <li>
+          looking for entry-level cybersecurity and software engineering roles
+        </li>
       </ul>
     </section>
 
@@ -58,24 +56,15 @@ import Footer from "../components/Footer.astro";
       </div>
 
       <div class="space-y-4">
-        <article class="rounded-lg border border-zinc-800 p-5">
-          <p class="mb-2 text-sm text-zinc-500">coming soon</p>
-          <h3 class="font-medium text-zinc-100">
-            building my cybersecurity home lab
-          </h3>
-          <p class="mt-2 leading-7 text-zinc-400">
-            notes on setting up an isolated lab for networking, traffic
-            analysis, dns filtering, and defensive security practice.
-          </p>
-        </article>
+        <BlogCard
+          title="building my cybersecurity home lab"
+          description="notes on setting up an isolated lab for networking, traffic analysis, dns filtering, and defensive security practice."
+        />
 
-        <article class="rounded-lg border border-zinc-800 p-5">
-          <p class="mb-2 text-sm text-zinc-500">coming soon</p>
-          <h3 class="font-medium text-zinc-100">welcome to my blog</h3>
-          <p class="mt-2 leading-7 text-zinc-400">
-            a space where i yap about whatever!
-          </p>
-        </article>
+        <BlogCard
+          title="welcome to my blog"
+          description="a space where i yap about whatever!"
+        />
       </div>
     </section>
 
@@ -91,43 +80,29 @@ import Footer from "../components/Footer.astro";
       </div>
 
       <div class="space-y-4">
-        <article class="rounded-lg border border-zinc-800 p-5">
-          <h3 class="font-medium text-zinc-100">cybersecurity home lab</h3>
-          <p class="mt-2 leading-7 text-zinc-400">
-            an isolated lab using linux and windows virtual machines, vmware,
-            wireshark, and pi-hole to practice networking, traffic analysis,
-            dns-level filtering, and defensive workflows.
-          </p>
-          <p class="mt-3 text-sm text-zinc-500">
-            vmware · linux · windows · wireshark · pi-hole
-          </p>
-        </article>
+        <ProjectCard
+          title="cybersecurity home lab"
+          description="an isolated lab using linux and windows virtual machines, vmware, wireshark, and pi-hole to practice networking, traffic analysis, dns-level filtering, and defensive workflows."
+          tags={["vmware", "linux", "windows", "wireshark", "pi-hole"]}
+        />
 
-        <article class="rounded-lg border border-zinc-800 p-5">
-          <h3 class="font-medium text-zinc-100">simple c compiler</h3>
-          <p class="mt-2 leading-7 text-zinc-400">
-            a multi-phase compiler for a subset of c, including lexical
-            analysis, parsing, semantic analysis, scoped symbol tables, type
-            checking, and x86/linux assembly generation.
-          </p>
-          <p class="mt-3 text-sm text-zinc-500">
-            c++ · x86 assembly · linux · gdb
-          </p>
-        </article>
+        <ProjectCard
+          title="simple c compiler"
+          description="a multi-phase compiler for a subset of c, including lexical analysis, parsing, semantic analysis, scoped symbol tables, type checking, and x86/linux assembly generation."
+          tags={["c++", "x86 assembly", "linux", "gdb"]}
+        />
 
-        <article class="rounded-lg border border-zinc-800 p-5">
-          <h3 class="font-medium text-zinc-100">
-            multi-agent robot formation control
-          </h3>
-          <p class="mt-2 leading-7 text-zinc-400">
-            a senior capstone project involving decentralized robot formation
-            control, matlab/simulink simulation, ros 2 integration, slam/amcl
-            localization, and ekf-based pose estimation.
-          </p>
-          <p class="mt-3 text-sm text-zinc-500">
-            ros 2 · matlab/simulink · slam/amcl · ekf · raspberry pi
-          </p>
-        </article>
+        <ProjectCard
+          title="multi-agent robot formation control"
+          description="a senior capstone project involving decentralized robot formation control, matlab/simulink simulation, ros 2 integration, slam/amcl localization, and ekf-based pose estimation."
+          tags={[
+            "ros 2",
+            "matlab/simulink",
+            "slam/amcl",
+            "ekf",
+            "raspberry pi",
+          ]}
+        />
       </div>
     </section>
   </main>

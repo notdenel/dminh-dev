@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
 ---
 
 <BaseLayout
@@ -12,9 +13,14 @@ import Footer from "../../components/Footer.astro";
 
     <main class="flex-1">
         <section class="space-y-4">
-            <a href="/" class="back-button text-sm text-zinc-500 hover:text-zinc-300">
-                ← back
-            </a>
+            <div class="mb-6">
+                <a
+                    href="/"
+                    class="back-button text-sm text-zinc-500 hover:text-zinc-300"
+                >
+                    ← back
+                </a>
+            </div>
 
             <h1
                 class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
@@ -31,54 +37,29 @@ import Footer from "../../components/Footer.astro";
         </section>
 
         <section class="mt-12 space-y-4">
-            <article class="rounded-lg border border-zinc-800 p-5">
-                <h2 class="font-medium text-zinc-100">
-                    cybersecurity home lab
-                </h2>
+            <ProjectCard
+                title="cybersecurity home lab"
+                description="an isolated lab using linux and windows virtual machines, vmware, wireshark, and pi-hole to practice networking, traffic analysis, dns-level filtering, and defensive workflows."
+                tags={["vmware", "linux", "windows", "wireshark", "pi-hole"]}
+            />
 
-                <p class="mt-2 leading-7 text-zinc-400">
-                    an isolated lab using linux and windows virtual machines,
-                    vmware, wireshark, and pi-hole to practice networking,
-                    traffic analysis, dns-level filtering, system hardening, and
-                    defensive workflows.
-                </p>
+            <ProjectCard
+                title="simple c compiler"
+                description="a multi-phase compiler for a subset of c, including lexical analysis, parsing, semantic analysis, scoped symbol tables, type checking, and x86/linux assembly generation."
+                tags={["c++", "x86 assembly", "linux", "gdb"]}
+            />
 
-                <p class="mt-3 text-sm text-zinc-500">
-                    vmware · linux · windows · wireshark · pi-hole
-                </p>
-            </article>
-
-            <article class="rounded-lg border border-zinc-800 p-5">
-                <h2 class="font-medium text-zinc-100">simple c compiler</h2>
-
-                <p class="mt-2 leading-7 text-zinc-400">
-                    a multi-phase compiler for a subset of c, including lexical
-                    analysis, recursive-descent parsing, semantic analysis,
-                    scoped symbol tables, type checking, ast-based code
-                    generation, and 32-bit x86/linux assembly output.
-                </p>
-
-                <p class="mt-3 text-sm text-zinc-500">
-                    c++ · x86 assembly · linux · gdb
-                </p>
-            </article>
-
-            <article class="rounded-lg border border-zinc-800 p-5">
-                <h2 class="font-medium text-zinc-100">
-                    multi-agent robot formation control
-                </h2>
-
-                <p class="mt-2 leading-7 text-zinc-400">
-                    a senior capstone project involving decentralized robot
-                    formation control, matlab/simulink simulation, ros 2
-                    integration, slam/amcl localization, odometry, imu data, and
-                    ekf-based pose estimation.
-                </p>
-
-                <p class="mt-3 text-sm text-zinc-500">
-                    ros 2 · matlab/simulink · slam/amcl · ekf · raspberry pi
-                </p>
-            </article>
+            <ProjectCard
+                title="multi-agent robot formation control"
+                description="a senior capstone project involving decentralized robot formation control, matlab/simulink simulation, ros 2 integration, slam/amcl localization, and ekf-based pose estimation."
+                tags={[
+                    "ros 2",
+                    "matlab/simulink",
+                    "slam/amcl",
+                    "ekf",
+                    "raspberry pi",
+                ]}
+            />
         </section>
     </main>
 

@@ -28,7 +28,7 @@ const {
 
     <!-- global script to handle back buttons across site -->
     <script>
-      // event delegation to record click on any class
+      // event delegation to record back button click
       document.body.addEventListener('click', (event) => {
         // find closest ancestor that's an anchor tag
         const target = event.target as HTMLElement;

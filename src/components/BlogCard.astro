@@ -1,0 +1,30 @@
+---
+type Props = {
+    title: string;
+    description: string;
+    status?: string;
+    href?: string;
+};
+
+const { title, description, status = "coming soon", href } = Astro.props;
+---
+
+<article class="rounded-lg border border-zinc-800 p-5 transition-colors hover:border-zinc-700">
+    {status && <p class="mb-2 text-sm text-zinc-500">{status}</p>}
+
+    {
+        href ? (
+            <h3 class="font-medium text-zinc-100">
+                <a href={href} class="hover:text-zinc-300">
+                    {title}
+                </a>
+            </h3>
+        ) : (
+            <h3 class="font-medium text-zinc-100">{title}</h3>
+        )
+    }
+
+    <p class="mt-2 leading-7 text-zinc-400">
+        {description}
+    </p>
+</article>
