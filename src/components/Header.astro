@@ -1,14 +1,58 @@
-<header class="mb-16 flex items-center justify-between gap-6 text-sm">
+---
+const normalizePath = (path: string) => {
+  const normalized = path.replace(/\/$/, "");
+  return normalized || "/";
+};
+
+const pathname = normalizePath(Astro.url.pathname); // get current page path, then normalize so that
+                                                    // something like /blog and /blog/ are handled the same
+
+const isActive = (href: string) => {
+  const normalizedHref = normalizePath(href);
+
+  if (normalizedHref === "/") {
+    return pathname === "/";
+  }
+
+  // check whether the current page match nav link so a blog post will still activate nav item
+  return (
+    pathname === normalizedHref || pathname.startsWith(`${normalizedHref}/`)
+  );
+};
+
+const navLinks = [
+  { href: "/blog", label: "blog" },
+  { href: "/projects", label: "projects" },
+];
+---
+
+<!-- <header class="mb-16 flex items-center justify-between gap-6 text-sm"> -->
+ <header class="mb-16 flex flex-col items-start gap-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6">
   <a href="/" class="site-link-strong font-medium tracking-tight">
     dminh.dev
   </a>
 
-  <nav class="flex items-center gap-4">
-    <a href="/blog" class="site-link">blog</a>
-    <a href="/projects" class="site-link">projects</a>
+  <!-- <nav class="flex items-center gap-4"> -->
+   <nav class="flex flex-wrap items-center gap-x-4 gap-y-2">
+    {
+      navLinks.map((link) => {
+        const active = isActive(link.href);
+
+        return (
+          <a
+            href={link.href}
+            class={active ? "site-link site-link-active" : "site-link"}
+            aria-current={active ? "page" : undefined} 
+          > 
+            {link.label}
+          </a>
+        );
+      })
+    }
+
     <a href="https://github.com/notdenel" class="site-link">github</a>
-    <a href="https://www.linkedin.com/in/dminhsims/" class="site-link"
-      >linkedin</a
-    >
+    <a href="https://www.linkedin.com/in/dminhsims/" class="site-link">
+      linkedin
+    </a>
   </nav>
 </header>

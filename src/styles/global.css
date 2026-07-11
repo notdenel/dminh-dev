@@ -63,6 +63,25 @@ body {
     color: var(--site-accent-hover);
 }
 
+.site-link-active {
+    color: var(--site-accent-hover);
+}
+
+.site-icon-link {
+    color: var(--site-text-faint);
+    transition:
+        color 160ms ease,
+        transform 160ms ease;
+}
+
+.site-icon-link:hover {
+    color: var(--site-accent-hover);
+}
+
+.site-icon-link:active {
+    transform: translateY(1px);
+}
+
 .text-link {
     color: var(--site-text-soft);
     text-decoration-line: underline;
