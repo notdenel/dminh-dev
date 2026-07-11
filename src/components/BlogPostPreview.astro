@@ -1,0 +1,41 @@
+---
+type Props = {
+    title: string;
+    description: string;
+    date: string;
+    tags?: string[];
+    href: string;
+};
+
+const { title, description, date, tags = [], href } = Astro.props;
+
+const tagHref = (tag: string) => `/blog/tags/${encodeURIComponent(tag)}`;
+---
+
+<article class="group">
+    <h3 class="text-lg font-medium leading-snug text-zinc-100">
+        <a href={href} class="site-link-strong">
+            {title}
+        </a>
+    </h3>
+
+    <p class="mt-1 text-sm text-zinc-500">
+        {date}
+    </p>
+
+    <p class="mt-2 max-w-2xl leading-7 text-zinc-400">
+        {description}
+    </p>
+
+    {
+        tags.length > 0 && (
+            <div class="mt-3 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                    <a href={tagHref(tag)} class="tag-pill">
+                        #{tag}
+                    </a>
+                ))}
+            </div>
+        )
+    }
+</article>

@@ -3,8 +3,13 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import BackLink from "../../components/BackLink.astro";
-import BlogCard from "../../components/BlogCard.astro";
-import { blogPosts } from "../../data/blog";
+import BlogPostPreview from "../../components/BlogPostPreview.astro";
+import { getCollection } from "astro:content";
+import { formatDisplayDate } from "../../utils/formatDate";
+
+const posts = (await getCollection("blog"))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <BaseLayout
@@ -15,7 +20,7 @@ import { blogPosts } from "../../data/blog";
 
     <main class="flex-1">
         <section class="space-y-4">
-            <div class="mb-6">     
+            <div class="mb-6">
                 <BackLink />
             </div>
 
@@ -32,14 +37,15 @@ import { blogPosts } from "../../data/blog";
             </p>
         </section>
 
-        <section class="mt-12 space-y-4">
+        <section class="mt-12 space-y-10">
             {
-                blogPosts.map((post) => (
-                    <BlogCard
-                        title={post.title}
-                        description={post.description}
-                        status={post.status}
-                        href={post.href}
+                posts.map((post) => (
+                    <BlogPostPreview
+                        title={post.data.title}
+                        description={post.data.description}
+                        date={formatDisplayDate(post.data.pubDate)}
+                        tags={post.data.tags}
+                        href={`/blog/${post.id}`}
                     />
                 ))
             }

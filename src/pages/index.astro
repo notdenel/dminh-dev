@@ -2,12 +2,24 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import BlogCard from "../components/BlogCard.astro";
+import BlogPostPreview from "../components/BlogPostPreview.astro";
 import ProjectCard from "../components/ProjectCard.astro";
-import { blogPosts } from "../data/blog";
 import { projects } from "../data/projects";
+import { getCollection } from "astro:content";
+import { formatDisplayDate } from "../utils/formatDate";
 
-const featuredBlogPosts = blogPosts.filter((post) => post.featured);
+const featuredBlogPosts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft && post.data.featured)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
 const featuredProjects = projects.filter((project) => project.featured);
 ---
 
@@ -29,9 +41,7 @@ const featuredProjects = projects.filter((project) => project.featured);
           software. i enjoy understanding why things work, bend, or break.
         </p>
 
-        <p class="text-sm text-zinc-500">
-          san jose, ca · open to work
-        </p>
+        <p class="text-sm text-zinc-500">san jose, ca · open to work</p>
       </div>
     </section>
 
@@ -60,14 +70,15 @@ const featuredProjects = projects.filter((project) => project.featured);
         <a href="/blog" class="site-link text-sm"> view all → </a>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-10">
         {
           featuredBlogPosts.map((post) => (
-            <BlogCard
-              title={post.title}
-              description={post.description}
-              status={post.status}
-              href={post.href}
+            <BlogPostPreview
+              title={post.data.title}
+              description={post.data.description}
+              date={formatDisplayDate(post.data.pubDate)}
+              tags={post.data.tags}
+              href={`/blog/${post.id}`}
             />
           ))
         }
