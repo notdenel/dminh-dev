@@ -42,7 +42,9 @@ const formattedUpdatedDate = post.data.updatedDate
     <main class="flex-1">
         <article class="mx-auto max-w-2xl">
             <div class="space-y-8">
-                <BackLink href="/blog" />
+                <div class="mb-6">
+                    <BackLink />
+                </div>
 
                 <header class="space-y-3">
                     <h1
@@ -51,11 +53,22 @@ const formattedUpdatedDate = post.data.updatedDate
                         {post.data.title}
                     </h1>
 
-                    <p class="text-sm text-zinc-500">
-                        {formattedPubDate}
+                    <p
+                        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-500"
+                    >
+                        <span>{formattedPubDate}</span>
+
                         {
                             formattedUpdatedDate && (
-                                <span> · updated {formattedUpdatedDate}</span>
+                                <>
+                                    <span
+                                        class="metadata-separator"
+                                        aria-hidden="true"
+                                    >
+                                        •
+                                    </span>
+                                    <span>updated {formattedUpdatedDate}</span>
+                                </>
                             )
                         }
                     </p>

@@ -8,10 +8,10 @@ import { projects } from "../data/projects";
 import { getCollection } from "astro:content";
 import { formatDisplayDate } from "../utils/formatDate";
 
-const featuredBlogPosts = (await getCollection("blog"))
-  .filter((post) => !post.data.draft && post.data.featured)
+const recentBlogPosts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 2);
+  .slice(0, 3);
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString("en-US", {
@@ -35,13 +35,19 @@ const featuredProjects = projects.filter((project) => project.featured);
           hi, i'm daniel!
         </h1>
 
-        <p class="max-w-2xl text-lg leading-8 text-zinc-300">
+        <p class="max-w-2xl text-base leading-8 text-zinc-300">
           i recently graduated with a degree in computer science & engineering,
           and am currently navigating the world of cybersecurity, systems, and
           software. i enjoy understanding why things work, bend, or break.
         </p>
 
-        <p class="text-sm text-zinc-500">san jose, ca · open to work</p>
+        <p
+          class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium text-zinc-500"
+        >
+          <span>san jose, ca</span>
+          <span class="metadata-separator" aria-hidden="true">•</span>
+          <span>open to work</span>
+        </p>
       </div>
     </section>
 
@@ -50,7 +56,7 @@ const featuredProjects = projects.filter((project) => project.featured);
         currently
       </h2>
 
-      <ul class="space-y-3 text-zinc-300">
+      <ul class="space-y-3 text-base text-zinc-300">
         <li>building a cybersecurity home lab</li>
         <li>studying for network+ and ccna</li>
         <li>making small projects for fun</li>
@@ -67,12 +73,12 @@ const featuredProjects = projects.filter((project) => project.featured);
           blog
         </h2>
 
-        <a href="/blog" class="site-link text-sm"> view all → </a>
+        <a href="/blog" class="site-link text-sm font-medium"> view all → </a>
       </div>
 
       <div class="space-y-10">
         {
-          featuredBlogPosts.map((post) => (
+          recentBlogPosts.map((post) => (
             <BlogPostPreview
               title={post.data.title}
               description={post.data.description}
@@ -91,7 +97,7 @@ const featuredProjects = projects.filter((project) => project.featured);
           projects
         </h2>
 
-        <a href="/projects" class="site-link text-sm"> view all → </a>
+        <a href="/projects" class="site-link text-sm font-medium"> view all → </a>
       </div>
 
       <div class="space-y-4">

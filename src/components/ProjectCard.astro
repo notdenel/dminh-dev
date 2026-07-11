@@ -28,7 +28,18 @@ const { title, description, tags = [], href } = Astro.props;
 
     {
         tags.length > 0 && (
-            <p class="mt-3 text-sm text-zinc-500">{tags.join(" · ")}</p>
+            <p class="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500">
+                {tags.map((tag, index) => (
+                    <>
+                        {index > 0 && (
+                            <span class="metadata-separator" aria-hidden="true">
+                                •
+                            </span>
+                        )}
+                        <span>{tag}</span>
+                    </>
+                ))}
+            </p>
         )
     }
 </article>

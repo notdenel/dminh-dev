@@ -1,10 +1,9 @@
 ---
-title: "welcome to my blog"
-description: "a small note on why this site exists and what i want to write here"
+title: "Hi"
+description: "Welcome to my blog!"
 pubDate: 2026-07-10
 tags:
   - personal
-featured: true
 draft: false
 ---
 

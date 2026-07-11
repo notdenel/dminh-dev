@@ -135,6 +135,11 @@ body {
     outline-offset: 4px;
 }
 
+.metadata-separator {
+    color: var(--site-text-faint);
+    font-style: normal;
+}
+
 /* ARTICLE MARKDOWN STYLING */
 
 .article-content {

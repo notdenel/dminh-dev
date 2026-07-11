@@ -1,12 +1,11 @@
 ---
-title: "building dminh.dev"
-description: "notes on building my personal site with astro, tailwind, markdown, and vercel."
+title: "Building dminh.dev"
+description: "Notes on building my personal site with Astro, Tailwind CSS, Markdown, and Vercel"
 pubDate: 2026-07-10
 tags:
-  - astro
+  - technical
   - learning
-featured: true
-draft: true
+draft: false
 ---
 
 this is a draft post about building the site.
