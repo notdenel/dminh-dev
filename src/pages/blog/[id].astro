@@ -2,10 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import SectionDivider from "../../components/SectionDivider.astro";
 import BackLink from "../../components/BackLink.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { formatDisplayDate } from "../../utils/formatDate";
+import { getReadingTime } from "../../utils/readingTime"; // time determined based on .md body
 
 type Props = {
     post: CollectionEntry<"blog">;
@@ -25,12 +27,17 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const readingTime = getReadingTime(post.body ?? "");
 
 const formattedPubDate = formatDisplayDate(post.data.pubDate);
 
 const formattedUpdatedDate = post.data.updatedDate
     ? formatDisplayDate(post.data.updatedDate)
     : undefined;
+
+const dateLabel = formattedUpdatedDate
+    ? `${formattedPubDate} (updated ${formattedUpdatedDate})`
+    : formattedPubDate;
 ---
 
 <BaseLayout
@@ -46,7 +53,7 @@ const formattedUpdatedDate = post.data.updatedDate
                     <BackLink />
                 </div>
 
-                <header class="space-y-3">
+                <header>
                     <h1
                         class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
                     >
@@ -54,28 +61,18 @@ const formattedUpdatedDate = post.data.updatedDate
                     </h1>
 
                     <p
-                        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-500"
+                        class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium italic text-zinc-500"
                     >
-                        <span>{formattedPubDate}</span>
-
-                        {
-                            formattedUpdatedDate && (
-                                <>
-                                    <span
-                                        class="metadata-separator"
-                                        aria-hidden="true"
-                                    >
-                                        •
-                                    </span>
-                                    <span>updated {formattedUpdatedDate}</span>
-                                </>
-                            )
-                        }
+                        <span>{dateLabel}</span>
+                        <span class="metadata-separator" aria-hidden="true"
+                            >•</span
+                        >
+                        <span>{readingTime}</span>
                     </p>
 
                     {
                         post.data.tags.length > 0 && (
-                            <div class="flex flex-wrap gap-2 pt-1">
+                            <div class="mt-4 flex flex-wrap gap-2">
                                 {post.data.tags.map((tag) => (
                                     <a
                                         href={`/blog/tags/${encodeURIComponent(tag)}`}
@@ -89,7 +86,9 @@ const formattedUpdatedDate = post.data.updatedDate
                     }
                 </header>
 
-                <div class="article-content">
+                <SectionDivider />
+
+                <div class="mt-8 article-content">
                     <Content />
                 </div>
             </div>
