@@ -114,3 +114,104 @@ body {
     outline: 2px solid var(--site-accent);
     outline-offset: 4px;
 }
+
+/* ARTICLE MARKDOWN STYLING */
+
+.article-content {
+    color: var(--site-text-soft);
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.article-content>*+* {
+    margin-top: 1.25rem;
+}
+
+.article-content h2 {
+    margin-top: 2.5rem;
+    color: var(--site-text);
+    font-size: 1.5rem;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+}
+
+.article-content h3 {
+    margin-top: 2rem;
+    color: var(--site-text);
+    font-size: 1.2rem;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.article-content p {
+    color: var(--site-text-soft);
+}
+
+.article-content a {
+    color: var(--site-text);
+    text-decoration-line: underline;
+    text-decoration-color: rgba(105, 105, 207, 0.45);
+    text-underline-offset: 0.18em;
+    transition:
+        color 160ms ease,
+        text-decoration-color 160ms ease;
+}
+
+.article-content a:hover {
+    color: var(--site-accent-hover);
+    text-decoration-color: var(--site-accent-hover);
+}
+
+.article-content ul,
+.article-content ol {
+    padding-left: 1.5rem;
+}
+
+.article-content ul {
+    list-style-type: disc;
+}
+
+.article-content ol {
+    list-style-type: decimal;
+}
+
+.article-content li+li {
+    margin-top: 0.5rem;
+}
+
+.article-content blockquote {
+    border-left: 3px solid var(--site-accent);
+    padding-left: 1rem;
+    color: var(--site-text-muted);
+    font-style: italic;
+}
+
+.article-content code {
+    border: 1px solid var(--site-border);
+    border-radius: 0.35rem;
+    background: var(--site-surface);
+    padding: 0.15rem 0.35rem;
+    color: var(--site-text);
+    font-size: 0.9em;
+}
+
+.article-content pre {
+    overflow-x: auto;
+    border: 1px solid var(--site-border);
+    border-radius: 0.75rem;
+    background: var(--site-surface);
+    padding: 1rem;
+}
+
+.article-content pre code {
+    border: 0;
+    background: transparent;
+    padding: 0;
+}
+
+.article-content hr {
+    border: 0;
+    border-top: 1px solid var(--site-border);
+    margin: 2rem 0;
+}

@@ -1,0 +1,101 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import BackLink from "../../components/BackLink.astro";
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+    post: CollectionEntry<"blog">;
+};
+
+export async function getStaticPaths() {
+    const posts = await getCollection("blog", ({ data }) => {
+        return import.meta.env.PROD ? data.draft !== true : true; // drafts can exist while developing
+                                                                  // but draft posts are excluded from production builds
+    });
+
+    return posts.map((post) => ({
+        params: { id: post.id },
+        props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedPubDate = post.data.pubDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+});
+
+const formattedUpdatedDate = post.data.updatedDate?.toLocaleDateString(
+    "en-US",
+    {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    },
+);
+---
+
+<BaseLayout
+    title={`${post.data.title} | dminh.dev`}
+    description={post.data.description}
+>
+    <Header />
+
+    <main class="flex-1">
+        <article class="mx-auto max-w-2xl">
+            <div class="space-y-8">
+                <BackLink href="/blog" />
+
+                <header class="space-y-4">
+                    <div class="space-y-2">
+                        <p class="text-sm text-zinc-500">
+                            {formattedPubDate}
+                            {
+                                formattedUpdatedDate && (
+                                    <span>
+                                        {" "}
+                                        · updated {formattedUpdatedDate}
+                                    </span>
+                                )
+                            }
+                        </p>
+
+                        <h1
+                            class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
+                        >
+                            {post.data.title}
+                        </h1>
+                    </div>
+
+                    <p class="max-w-2xl text-lg leading-8 text-zinc-400">
+                        {post.data.description}
+                    </p>
+
+                    {
+                        post.data.tags.length > 0 && (
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                {post.data.tags.map((tag) => (
+                                    <span class="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-500">
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )
+                    }
+                </header>
+
+                <div class="article-content">
+                    <Content />
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <Footer />
+</BaseLayout>
