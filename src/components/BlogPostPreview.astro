@@ -20,19 +20,19 @@ const tagHref = (tag: string) => `/blog/tags/${encodeURIComponent(tag)}`;
             </a>
         </h3>
 
-        <span class="flex items-baseline gap-x-3 text-sm font-medium italic text-zinc-500">
+        <span class="flex items-baseline gap-x-3 text-sm font-semibold italic text-zinc-500">
             <span class="metadata-separator" aria-hidden="true">•</span>
             <span>{date}</span>
         </span>
     </div>
 
-    <p class="mt-1 max-w-2xl text-sm leading-6 text-zinc-500">
+    <p class="font-copy mt-1 max-w-2xl text-base leading-6 text-zinc-500">
         {description}
     </p>
 
     {
         tags.length > 0 && (
-            <div class="mt-2 flex flex-wrap gap-2">
+            <div class="font-medium mt-2 flex flex-wrap gap-2">
                 {tags.map((tag) => (
                     <a href={tagHref(tag)} class="tag-pill">
                         #{tag}

@@ -1,20 +1,21 @@
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/source-sans-3";
 @import "tailwindcss";
 
 :root {
     color-scheme: dark;
 
-    --site-bg: #09090b;
+    --site-bg: #101014;
 
-    --site-text: #f4f4f5;
-    --site-text-soft: #d4d4d8;
-    --site-text-muted: #a1a1aa;
-    --site-text-faint: #71717a;
+    --site-text: #f2f2f4;
+    --site-text-soft: #b9bac6;
+    --site-text-muted: #878899;
+    --site-text-faint: #6f7080;
 
-    --site-surface: rgba(24, 24, 27, 0.32);
-    --site-surface-hover: rgba(39, 39, 42, 0.36);
+    --site-surface: rgba(255, 255, 255, 0.035);
+    --site-surface-hover: rgba(255, 255, 255, 0.055);
 
-    --site-border: rgba(63, 63, 70, 0.72);
+    --site-border: rgba(255, 255, 255, 0.13);
     --site-border-hover: rgba(105, 105, 207, 0.48);
 
     --site-accent: #6969cf;
@@ -30,7 +31,8 @@ body {
     background: var(--site-bg);
     color: var(--site-text);
     font-family:
-        "Inter Variable",
+        "Plus Jakarta Sans Variable",
+        "Plus Jakarta Sans",
         Inter,
         ui-sans-serif,
         system-ui,
@@ -43,6 +45,15 @@ body {
 ::selection {
     background: var(--site-accent-muted);
     color: var(--site-text);
+}
+
+.font-copy {
+    font-family:
+        "Source Sans 3 Variable",
+        "Source Sans 3",
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
 }
 
 .site-link {
@@ -144,8 +155,15 @@ body {
 
 .article-content {
     color: var(--site-text-soft);
-    font-size: 1rem;
-    line-height: 1.8;
+    font-family:
+        "Source Sans 3 Variable",
+        "Source Sans 3",
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.9;
 }
 
 .article-content>*+* {
@@ -207,9 +225,17 @@ body {
 
 .article-content blockquote {
     border-left: 3px solid var(--site-accent);
-    padding-left: 1rem;
-    color: var(--site-text-muted);
-    font-style: italic;
+    background: var(--site-accent-muted);
+    padding: 1rem 1.25rem;
+    color: var(--site-text-soft);
+}
+
+.article-content blockquote>*:first-child {
+    margin-top: 0;
+}
+
+.article-content blockquote>*:last-child {
+    margin-bottom: 0;
 }
 
 .article-content code {
@@ -225,13 +251,13 @@ body {
     overflow-x: auto;
     border: 1px solid var(--site-border);
     border-radius: 0.75rem;
-    background: var(--site-surface);
+    background: var(--site-surface) !important;
     padding: 1rem;
 }
 
 .article-content pre code {
     border: 0;
-    background: transparent;
+    background: transparent !important;
     padding: 0;
 }
 
@@ -239,4 +265,58 @@ body {
     border: 0;
     border-top: 1px solid var(--site-border);
     margin: 2rem 0;
+}
+
+.article-content img {
+    display: block;
+    margin: 2rem auto;
+    max-width: 100%;
+    height: auto;
+}
+
+.article-content p:has(> img) {
+    margin-block: 2rem;
+}
+
+.article-content p:has(> img) img {
+    margin-block: 0;
+}
+
+.article-content p:has(> img)+p {
+    margin-top: -1rem;
+}
+
+.article-content p:has(> img)+p em {
+    display: block;
+    color: var(--site-text-faint);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.article-content .callout {
+    border: 1px solid var(--site-border);
+    border-radius: 0.75rem;
+    background: var(--site-surface);
+    padding: 1rem 1.25rem;
+    color: var(--site-text-soft);
+}
+
+.article-content .callout>*+* {
+    margin-top: 0.75rem;
+}
+
+.article-content .callout-title {
+    color: var(--site-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: lowercase;
+}
+
+.article-content .callout>*:first-child {
+    margin-top: 0;
+}
+
+.article-content .callout>*:last-child {
+    margin-bottom: 0;
 }

@@ -35,7 +35,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
                 blog
             </h1>
 
-            <p class="max-w-2xl leading-7 text-zinc-400">
+            <p class="font-copy max-w-2xl leading-8 text-zinc-300">
                 a small collection of notes, project writeups, and thoughts on
                 things i’m learning or building. and i occasionally yap!
             </p>
@@ -44,11 +44,11 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
         {
             tags.length > 0 && (
                 <section class="mt-8 space-y-3">
-                    <h2 class="text-sm font-medium lowercase tracking-wide text-zinc-500">
+                    <h2 class="text-sm font-semibold lowercase tracking-wide text-zinc-500">
                         tags
                     </h2>
 
-                    <div class="flex flex-wrap gap-2">
+                    <div class="font-medium flex flex-wrap gap-2">
                         {tags.map((tag) => (
                             <a
                                 href={`/blog/tags/${encodeURIComponent(tag)}`}

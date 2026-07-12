@@ -14,5 +14,5 @@ const months = [
 ];
 
 export const formatDisplayDate = (date: Date) => {
-  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+  return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
 };
