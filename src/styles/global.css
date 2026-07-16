@@ -109,54 +109,21 @@ body {
     text-decoration-color: var(--site-accent-hover);
 }
 
-/* .tag-pill {
-    border: 1px solid var(--site-border);
-    border-radius: 9999px;
-    background: rgba(24, 24, 27, 0.28);
-    padding: 0.25rem 0.65rem;
-    color: var(--site-text-faint);
-    font-size: 0.75rem;
-    line-height: 1;
-    transition:
-        color 160ms ease,
-        border-color 160ms ease,
-        background-color 160ms ease;
-}
-
-.tag-pill:hover {
-    border-color: var(--site-border-hover);
-    background: var(--site-accent-muted);
-    color: var(--site-accent-hover);
-}
-
-.tech-pill {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--site-border);
-    border-radius: 9999px;
-    background: var(--site-surface);
-    padding: 0.125rem 0.625rem;
-    color: var(--site-text-muted);
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.5;
-} */
-
 :where(.tag-pill, .tech-pill) {
     display: inline-flex;
     align-items: center;
     border: 1px solid var(--site-border);
+    border-color: var(--site-border);
     border-radius: 9999px;
     background: var(--site-surface);
     padding: 0.25rem 0.65rem;
     color: var(--site-text-muted);
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.25;
 }
 
 .tag-pill {
-    text-decoration: none;
     transition:
         border-color 160ms ease,
         background-color 160ms ease,
@@ -168,23 +135,6 @@ body {
     background: var(--site-accent-surface);
     color: var(--site-accent-hover);
 }
-
-/* .tech-pill {
-    cursor: default;
-} */
-
-/* .card-surface {
-    border-color: var(--site-border);
-    background: var(--site-surface);
-    transition:
-        border-color 160ms ease,
-        background-color 160ms ease;
-}
-
-.card-surface:hover {
-    border-color: var(--site-border-hover);
-    background: var(--site-surface-hover);
-} */
 
 .project-card .card-surface {
     border-color: var(--site-border);
