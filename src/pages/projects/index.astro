@@ -1,11 +1,16 @@
 ---
+import { getCollection } from "astro:content";
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
-import SectionDivider from "../../components/SectionDivider.astro";
 import BackLink from "../../components/BackLink.astro";
 import ProjectCard from "../../components/ProjectCard.astro";
-import { projects } from "../../data/projects";
+import SectionDivider from "../../components/SectionDivider.astro";
+
+const projects = (await getCollection("projects")).sort(
+    (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <BaseLayout
@@ -26,7 +31,7 @@ import { projects } from "../../data/projects";
                 projects
             </h1>
 
-            <p class="font-copy max-w-2xl leading-8 text-zinc-300">
+            <p class="font-copy max-w-2xl leading-8 text-lg text-zinc-300">
                 a small archive of projects from school, personal learning, and
                 independent tinkering. some are polished, some are still
                 evolving, and some are mainly here because they taught me
@@ -36,18 +41,19 @@ import { projects } from "../../data/projects";
 
         <SectionDivider />
 
-        <section class="mt-8 space-y-4">
+        <div class="mt-8 space-y-4">
             {
                 projects.map((project) => (
                     <ProjectCard
-                        title={project.title}
-                        description={project.description}
-                        tags={project.tags}
-                        href={project.href}
+                        title={project.data.title}
+                        description={project.data.description}
+                        technologies={project.data.technologies}
+                        status={project.data.status}
+                        href={`/projects/${project.id}/`}
                     />
                 ))
             }
-        </section>
+        </div>
     </main>
 
     <Footer />

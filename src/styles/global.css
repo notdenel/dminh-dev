@@ -21,6 +21,7 @@
     --site-accent: #6969cf;
     --site-accent-hover: #8b8be6;
     --site-accent-muted: rgba(105, 105, 207, 0.18);
+    --site-accent-surface: rgb(105 105 207 / 0.08);
 }
 
 html {
@@ -108,7 +109,7 @@ body {
     text-decoration-color: var(--site-accent-hover);
 }
 
-.tag-pill {
+/* .tag-pill {
     border: 1px solid var(--site-border);
     border-radius: 9999px;
     background: rgba(24, 24, 27, 0.28);
@@ -128,7 +129,51 @@ body {
     color: var(--site-accent-hover);
 }
 
-.card-surface {
+.tech-pill {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--site-border);
+    border-radius: 9999px;
+    background: var(--site-surface);
+    padding: 0.125rem 0.625rem;
+    color: var(--site-text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+} */
+
+:where(.tag-pill, .tech-pill) {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--site-border);
+    border-radius: 9999px;
+    background: var(--site-surface);
+    padding: 0.25rem 0.65rem;
+    color: var(--site-text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.tag-pill {
+    text-decoration: none;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+.tag-pill:hover {
+    border-color: var(--site-accent);
+    background: var(--site-accent-surface);
+    color: var(--site-accent-hover);
+}
+
+/* .tech-pill {
+    cursor: default;
+} */
+
+/* .card-surface {
     border-color: var(--site-border);
     background: var(--site-surface);
     transition:
@@ -139,6 +184,26 @@ body {
 .card-surface:hover {
     border-color: var(--site-border-hover);
     background: var(--site-surface-hover);
+} */
+
+.project-card .card-surface {
+    border-color: var(--site-border);
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease;
+}
+
+.project-card-title {
+    transition: color 160ms ease;
+}
+
+.project-card:hover .card-surface {
+    border-color: var(--site-accent);
+    background: var(--site-accent-surface);
+}
+
+.project-card:hover .project-card-title {
+    color: var(--site-accent-hover);
 }
 
 :focus-visible {
