@@ -6,11 +6,14 @@ import {
   formatMonthYearRange,
 } from "./formatDate.ts";
 
+// new Date("2026-07-11") is midnight UTC, so the day-shift assertion below can
+// only fail in a negative-UTC-offset zone. Pin one here rather than in the npm
+// script, so the guard works on any platform and under any ambient TZ.
+process.env.TZ = "America/Los_Angeles";
+
 test("formatDisplayDate does not shift the day in negative UTC offsets", () => {
   // Regression: `pubDate: 2026-07-11` once rendered as "Jul 10, 2026" because a
   // date-only string is midnight UTC and Pacific time is behind UTC.
-  // This assertion is only meaningful in a negative-UTC-offset zone, so the
-  // `test` script pins TZ=America/Los_Angeles to guarantee one everywhere.
   assert.equal(formatDisplayDate(new Date("2026-07-11")), "Jul 11, 2026");
 });
 
