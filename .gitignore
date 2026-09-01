@@ -23,11 +23,11 @@ pnpm-debug.log*
 .vercel/
 
 # design docs — kept local by choice, transferred manually between machines
-docs/
+/docs/
 
 # agent + tooling scratch
 CLAUDE.md
-.superpowers/
+/.superpowers/
 .claude/settings.local.json
 
 # editor / IDE
