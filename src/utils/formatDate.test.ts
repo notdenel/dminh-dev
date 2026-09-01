@@ -9,6 +9,8 @@ import {
 test("formatDisplayDate does not shift the day in negative UTC offsets", () => {
   // Regression: `pubDate: 2026-07-11` once rendered as "Jul 10, 2026" because a
   // date-only string is midnight UTC and Pacific time is behind UTC.
+  // This assertion is only meaningful in a negative-UTC-offset zone, so the
+  // `test` script pins TZ=America/Los_Angeles to guarantee one everywhere.
   assert.equal(formatDisplayDate(new Date("2026-07-11")), "Jul 11, 2026");
 });
 
