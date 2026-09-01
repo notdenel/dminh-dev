@@ -11,8 +11,7 @@ const {
   description = "personal dev site of daniel sims",
 } = Astro.props;
 
-const siteUrl = "https://dminh.dev";
-const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
 <!doctype html>

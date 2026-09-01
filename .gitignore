@@ -1,5 +1,6 @@
 # build output
 dist/
+
 # generated types
 .astro/
 
@@ -12,15 +13,35 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-
 # environment variables
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
 
-# macOS-specific files
-.DS_Store
+# deployment
+# .vercel holds the local project link and pulled env vars, incl. secrets
+.vercel/
 
-# jetbrains setting folder
-.idea/
+# design docs — kept local by choice, transferred manually between machines
+/docs/
+
+# agent + tooling scratch
 CLAUDE.md
+/.superpowers/
+.claude/settings.local.json
+
+# editor / IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# os cruft
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# misc build artefacts
+*.tsbuildinfo
+coverage/
+*.local

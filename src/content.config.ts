@@ -43,9 +43,6 @@ const projects = defineCollection({
 
         startDate: z.string().regex(/^\d{4}-\d{2}$/).optional(),
         endDate: z.string().regex(/^\d{4}-\d{2}$/).optional(),
-
-        image: z.string().optional(),
-        imageAlt: z.string().optional(),
     }),
 });
 

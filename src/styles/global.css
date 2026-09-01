@@ -34,7 +34,6 @@ body {
     font-family:
         "Plus Jakarta Sans Variable",
         "Plus Jakarta Sans",
-        Inter,
         ui-sans-serif,
         system-ui,
         -apple-system,
@@ -94,26 +93,10 @@ body {
     transform: translateY(1px);
 }
 
-.text-link {
-    color: var(--site-text-soft);
-    text-decoration-line: underline;
-    text-decoration-color: rgba(105, 105, 207, 0.45);
-    text-underline-offset: 0.18em;
-    transition:
-        color 160ms ease,
-        text-decoration-color 160ms ease;
-}
-
-.text-link:hover {
-    color: var(--site-accent-hover);
-    text-decoration-color: var(--site-accent-hover);
-}
-
 :where(.tag-pill, .tech-pill) {
     display: inline-flex;
     align-items: center;
     border: 1px solid var(--site-border);
-    border-color: var(--site-border);
     border-radius: 9999px;
     background: var(--site-surface);
     padding: 0.25rem 0.65rem;
