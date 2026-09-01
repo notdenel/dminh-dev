@@ -11,12 +11,7 @@ const {
   description = "personal dev site of daniel sims",
 } = Astro.props;
 
-// Astro.site comes from `site` in astro.config.mjs. It is always defined
-// because the config sets it; the fallback keeps types honest.
-const canonicalUrl = new URL(
-  Astro.url.pathname,
-  Astro.site ?? "https://dminh.dev",
-).toString();
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
 <!doctype html>
