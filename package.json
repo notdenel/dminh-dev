@@ -10,6 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "astro check",
     "test": "TZ=America/Los_Angeles node --test \"src/**/*.test.ts\""
   },
   "dependencies": {
@@ -23,5 +24,10 @@
   "allowScripts": {
     "@fontsource-variable/inter@5.2.8": true,
     "esbuild@0.28.1": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^24.13.3",
+    "typescript": "^6.0.3"
   }
 }
