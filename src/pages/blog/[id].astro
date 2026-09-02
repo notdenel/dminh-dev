@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import SectionDivider from "../../components/SectionDivider.astro";
-import BackLink from "../../components/BackLink.astro";
+import ArticleHeader from "../../components/ArticleHeader.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { formatDisplayDate } from "../../utils/formatDate";
@@ -48,49 +48,18 @@ const dateLabel = formattedUpdatedDate
 
     <main class="flex-1">
         <article class="mx-auto max-w-2xl">
-            <div class="space-y-8">
-                <div class="mb-6">
-                    <BackLink />
-                </div>
+            <ArticleHeader
+                title={post.data.title}
+                backHref="/blog"
+                metadata={[dateLabel, readingTime]}
+                pills={post.data.tags}
+                pillHref={(tag) => `/blog/tags/${encodeURIComponent(tag)}`}
+            />
 
-                <header>
-                    <h1
-                        class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
-                    >
-                        {post.data.title}
-                    </h1>
+            <SectionDivider />
 
-                    <p
-                        class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold italic text-zinc-500"
-                    >
-                        <span>{dateLabel}</span>
-                        <span class="metadata-separator" aria-hidden="true"
-                            >•</span
-                        >
-                        <span>{readingTime}</span>
-                    </p>
-
-                    {
-                        post.data.tags.length > 0 && (
-                            <div class="mt-4 flex flex-wrap gap-2">
-                                {post.data.tags.map((tag) => (
-                                    <a
-                                        href={`/blog/tags/${encodeURIComponent(tag)}`}
-                                        class="tag-pill"
-                                    >
-                                        #{tag}
-                                    </a>
-                                ))}
-                            </div>
-                        )
-                    }
-                </header>
-
-                <SectionDivider />
-
-                <div class="mt-8 article-content">
-                    <Content />
-                </div>
+            <div class="article-content mt-8">
+                <Content />
             </div>
         </article>
     </main>
