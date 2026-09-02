@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import SectionDivider from "../../components/SectionDivider.astro";
-import BackLink from "../../components/BackLink.astro";
+import PageHeader from "../../components/PageHeader.astro";
 import BlogPostPreview from "../../components/BlogPostPreview.astro";
 import { getCollection } from "astro:content";
 import { formatDisplayDate } from "../../utils/formatDate";
@@ -24,22 +24,11 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
     <Header />
 
     <main class="flex-1">
-        <section class="space-y-4">
-            <div class="mb-6">
-                <BackLink />
-            </div>
-
-            <h1
-                class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
-            >
-                blog
-            </h1>
-
-            <p class="font-copy max-w-2xl leading-8 text-lg text-zinc-300">
-                a small collection of notes, project writeups, and thoughts on
-                things i’m learning or building. and i occasionally yap!
-            </p>
-        </section>
+        <PageHeader
+            title="blog"
+            backHref="/"
+            lede="a small collection of notes, project writeups, and thoughts on things i’m learning or building. and i occasionally yap!"
+        />
 
         {
             tags.length > 0 && (

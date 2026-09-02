@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import PageHeader from "../components/PageHeader.astro";
 import BlogPostPreview from "../components/BlogPostPreview.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import { getCollection } from "astro:content";
@@ -22,29 +23,18 @@ const featuredProjects = (await getCollection("projects"))
   <Header />
 
   <main class="flex-1">
-    <section class="space-y-6">
-      <div class="space-y-4">
-        <h1
-          class="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl"
-        >
-          hi, i'm daniel!
-        </h1>
-
-        <p class="font-copy max-w-2xl text-lg leading-8 text-zinc-300">
-          i recently graduated with a degree in computer science & engineering,
-          and am currently navigating the world of cybersecurity, systems, and
-          software. i enjoy understanding why things work, bend, or break.
-        </p>
-
-        <p
-          class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-zinc-500"
-        >
-          <span>san jose, ca</span>
-          <span class="metadata-separator" aria-hidden="true">•</span>
-          <span>open to work</span>
-        </p>
-      </div>
-    </section>
+    <PageHeader
+      title="hi, i'm daniel!"
+      lede="i recently graduated with a degree in computer science & engineering, and am currently navigating the world of cybersecurity, systems, and software. i enjoy understanding why things work, bend, or break."
+    >
+      <p
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-zinc-500"
+      >
+        <span>san jose, ca</span>
+        <span class="metadata-separator" aria-hidden="true">•</span>
+        <span>open to work</span>
+      </p>
+    </PageHeader>
 
     <section class="mt-16 space-y-4">
       <h2 class="text-sm font-semibold lowercase tracking-wide text-zinc-500">
