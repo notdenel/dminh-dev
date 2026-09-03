@@ -14,7 +14,7 @@ const { title, backHref, metadata, pills = [], pillHref } = Astro.props;
 
 <PageHeader title={title} backHref={backHref}>
     <p
-        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold italic text-zinc-500"
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold italic text-muted"
     >
         {
             metadata.map((item, index) => (

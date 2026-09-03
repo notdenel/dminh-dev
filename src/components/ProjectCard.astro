@@ -12,24 +12,24 @@ const { title, description, technologies, href, status: projectStatus } = Astro.
 
 <a
     href={href}
-    class="project-card block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--site-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--site-bg)]"
+    class="project-card block rounded-lg"
 >
     <article class="card-surface rounded-lg border p-5">
 
         <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h3 class="project-card-title font-semibold text-zinc-100">
+            <h3 class="project-card-title font-semibold text-ink">
                 {title}
             </h3>
 
             <span
-                class="flex items-baseline gap-x-3 text-sm font-semibold italic text-zinc-500"
+                class="flex items-baseline gap-x-3 text-sm font-semibold italic text-muted"
             >
                 <span class="metadata-separator" aria-hidden="true">•</span>
                 <span>{projectStatus}</span>
             </span>
         </div>
 
-        <p class="font-copy mt-2 leading-7 text-zinc-500">
+        <p class="font-copy mt-2 leading-7 text-muted">
             {description}
         </p>
 
