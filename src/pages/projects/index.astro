@@ -36,7 +36,7 @@ const projects = (await getCollection("projects")).sort(
                         description={project.data.description}
                         technologies={project.data.technologies}
                         status={project.data.status}
-                        href={`/projects/${project.id}/`}
+                        href={`/projects/${project.id}`}
                     />
                 ))
             }
