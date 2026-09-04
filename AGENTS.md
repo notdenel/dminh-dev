@@ -15,6 +15,18 @@ console. Restart the dev server after adding a page or component. Decimals in
 arbitrary values (`grid-cols-[5.5rem_1fr]`) are not the problem — verified against
 a build.
 
+## Versioning
+
+Tags mark design milestones only. Three-digit `vMAJOR.MINOR.PATCH`, annotated,
+never the trailing-`.0`-dropped form. No patch tags: `main` deploys continuously,
+so every push is already the release, and a tag nobody rolls back to is noise —
+tag one retroactively if a specific patch ever needs naming.
+
+No GitHub Releases. There is no artifact to distribute, and hand-written notes go
+stale (v0.1.2 and v0.1.3 were tagged and never released, which is what retired the
+practice). Bump `package.json` only when cutting a tag, so its version always
+equals the latest tag.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build
