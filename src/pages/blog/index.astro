@@ -5,6 +5,7 @@ import Footer from "../../components/Footer.astro";
 import SectionDivider from "../../components/SectionDivider.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import BlogPostPreview from "../../components/BlogPostPreview.astro";
+import TagRow from "../../components/TagRow.astro";
 import { getCollection } from "astro:content";
 import { formatDisplayDate } from "../../utils/formatDate";
 
@@ -37,16 +38,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
                         tags
                     </h2>
 
-                    <div class="font-medium flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                            <a
-                                href={`/blog/tags/${encodeURIComponent(tag)}`}
-                                class="tag-pill"
-                            >
-                                #{tag}
-                            </a>
-                        ))}
-                    </div>
+                    <TagRow tags={tags} />
                 </section>
             )
         }

@@ -13,9 +13,7 @@ const { title, lede, backHref } = Astro.props;
 <section class="space-y-6">
     {
         backHref && (
-            <div class="mb-6">
-                <BackLink href={backHref} />
-            </div>
+            <BackLink href={backHref} />
         )
     }
 

@@ -1,0 +1,29 @@
+---
+import TechLine from "./TechLine.astro";
+
+interface Props {
+    title: string;
+    description: string;
+    technologies: string[];
+    designation: string;
+    yearRail?: string;
+    href: string;
+}
+
+const { title, description, technologies, designation, yearRail, href } =
+    Astro.props;
+---
+
+<a href={href} class="project-row">
+    <span class="project-row-rail">{yearRail}</span>
+
+    <span class="project-row-name">{title}</span>
+
+    <span class="project-row-designation">{designation}</span>
+
+    <span class="project-row-body">
+        <span class="project-row-description">{description}</span>
+
+        <TechLine technologies={technologies} />
+    </span>
+</a>

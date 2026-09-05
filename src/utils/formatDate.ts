@@ -38,3 +38,23 @@ export const formatMonthYearRange = (startDate?: string, endDate?: string) => {
 
   return `${formattedStartDate} — ${formattedEndDate}`;
 };
+
+// The year rail on a project row. Shortest form that still answers "when":
+// an unfinished project stays open, a one-year project shows one year.
+export const formatYearRail = (startDate?: string, endDate?: string) => {
+  if (!startDate) {
+    return undefined;
+  }
+
+  const startYear = startDate.slice(0, 4);
+
+  if (!endDate) {
+    return `${startYear} —`;
+  }
+
+  const endYear = endDate.slice(0, 4);
+
+  return startYear === endYear
+    ? startYear
+    : `${startYear}–${endYear.slice(2)}`;
+};

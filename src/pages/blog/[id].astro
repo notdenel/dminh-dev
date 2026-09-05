@@ -52,8 +52,7 @@ const dateLabel = formattedUpdatedDate
                 title={post.data.title}
                 backHref="/blog"
                 metadata={[dateLabel, readingTime]}
-                pills={post.data.tags}
-                pillHref={(tag) => `/blog/tags/${encodeURIComponent(tag)}`}
+                tags={post.data.tags}
             />
 
             <SectionDivider />

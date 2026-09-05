@@ -165,50 +165,143 @@ body {
     transform: translateY(1px);
 }
 
-:where(.tag-pill, .tech-pill) {
+/* TAGS, UNBOXED
+   The # carries the accent, the word stays quiet. min-height holds a ~44px
+   tap target that draws nothing; the row's negative block margin hands the
+   reclaimed space back to the layout so the rhythm is unchanged. */
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+    margin-block: -0.75rem;
+}
+
+.tag-link {
     display: inline-flex;
     align-items: center;
-    border: 1px solid var(--color-line);
-    border-radius: 9999px;
-    background: var(--color-surface);
-    padding: 0.25rem 0.65rem;
+    min-height: 2.75rem;
     color: var(--color-muted);
-    font-size: 0.75rem;
+    font-size: var(--text-meta);
     font-weight: 600;
-    line-height: 1.25;
-}
-
-.tag-pill {
-    transition:
-        border-color var(--motion) var(--ease),
-        background-color var(--motion) var(--ease),
-        color var(--motion) var(--ease);
-}
-
-.tag-pill:hover {
-    border-color: var(--color-accent);
-    background: var(--color-accent-surface);
-    color: var(--color-accent-hi);
-}
-
-.project-card .card-surface {
-    border-color: var(--color-line);
-    transition:
-        border-color var(--motion) var(--ease),
-        background-color var(--motion) var(--ease);
-}
-
-.project-card-title {
     transition: color var(--motion) var(--ease);
 }
 
-.project-card:hover .card-surface {
-    border-color: var(--color-accent);
+/* Decorative: a tag's accessible name is the word, not the sigil. */
+.tag-link::before {
+    content: "#";
+    color: var(--color-accent);
+}
+
+.tag-link:hover {
+    color: var(--color-accent-hi);
+}
+
+/* TECHNOLOGIES
+   Mono, dot-separated. Every machine-readable field in a project row shares
+   one voice; the prose has another. */
+.tech-line {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+.tech-line-dot {
+    margin: 0 0.4rem;
+}
+
+/* THE PROJECT ROW
+   Year rail left, designation right, prose spanning under both. The rail
+   reads down the left edge as a timeline, which is the question a stranger
+   asks first. */
+.project-list {
+    border-top: 1px solid var(--color-line);
+}
+
+.project-row {
+    display: grid;
+    grid-template-columns: 6rem 1fr auto;
+    align-items: baseline;
+    gap: 0.125rem 1.375rem;
+    margin-inline: -0.625rem;
+    border-bottom: 1px solid var(--color-line);
+    border-radius: var(--radius-token);
+    padding: 1rem 0.625rem 1.0625rem;
+    transition: background-color var(--motion) var(--ease);
+}
+
+.project-row:hover {
     background: var(--color-accent-surface);
 }
 
-.project-card:hover .project-card-title {
+.project-row-rail {
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.project-row-name {
+    color: var(--color-ink);
+    font-size: var(--text-subhead);
+    font-weight: 600;
+    transition: color var(--motion) var(--ease);
+}
+
+.project-row:hover .project-row-name {
     color: var(--color-accent-hi);
+}
+
+.project-row-designation {
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    white-space: nowrap;
+}
+
+.project-row-body {
+    grid-column: 2 / -1;
+}
+
+.project-row-description {
+    display: block;
+    margin-top: 0.3125rem;
+    max-width: 56ch;
+    color: var(--color-muted);
+    font-family: var(--font-copy);
+    font-size: var(--text-meta);
+    line-height: 1.65;
+}
+
+/* Narrow: the rail and the designation share one line above the title
+   rather than squeezing a 6rem column out of a 20rem viewport. */
+@media (width < 40rem) {
+    .project-row {
+        grid-template-columns: auto 1fr;
+    }
+
+    .project-row-rail {
+        grid-area: 1 / 1;
+    }
+
+    .project-row-designation {
+        grid-area: 1 / 2;
+        justify-self: end;
+    }
+
+    .project-row-name {
+        grid-area: 2 / 1 / 2 / -1;
+        margin-top: 0.25rem;
+    }
+
+    .project-row-body {
+        grid-area: 3 / 1 / 3 / -1;
+    }
 }
 
 :focus-visible {

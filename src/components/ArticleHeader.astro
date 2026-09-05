@@ -1,15 +1,23 @@
 ---
 import PageHeader from "./PageHeader.astro";
+import TagRow from "./TagRow.astro";
+import TechLine from "./TechLine.astro";
 
 type Props = {
     title: string;
     backHref: string;
     metadata: string[];
-    pills?: string[];
-    pillHref?: (pill: string) => string | undefined;
+    tags?: string[];
+    technologies?: string[];
 };
 
-const { title, backHref, metadata, pills = [], pillHref } = Astro.props;
+const {
+    title,
+    backHref,
+    metadata,
+    tags = [],
+    technologies = [],
+} = Astro.props;
 ---
 
 <PageHeader title={title} backHref={backHref}>
@@ -30,22 +38,9 @@ const { title, backHref, metadata, pills = [], pillHref } = Astro.props;
         }
     </p>
 
-    {
-        pills.length > 0 && (
-            <div class="flex flex-wrap gap-2">
-                {pills.map((pill) => {
-                    const href = pillHref?.(pill);
-                    return href ? (
-                        <a href={href} class="tag-pill">
-                            #{pill}
-                        </a>
-                    ) : (
-                        <span class="tech-pill">{pill}</span>
-                    );
-                })}
-            </div>
-        )
-    }
+    <TagRow tags={tags} />
+
+    <TechLine technologies={technologies} />
 
     <slot />
 </PageHeader>

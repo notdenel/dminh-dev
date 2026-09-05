@@ -5,8 +5,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import ProjectCard from "../../components/ProjectCard.astro";
-import SectionDivider from "../../components/SectionDivider.astro";
+import ProjectRow from "../../components/ProjectRow.astro";
+
+import { formatYearRail } from "../../utils/formatDate";
 
 const projects = (await getCollection("projects")).sort(
     (a, b) => a.data.order - b.data.order,
@@ -26,16 +27,18 @@ const projects = (await getCollection("projects")).sort(
             lede="a small archive of projects from school, personal learning, and independent tinkering. some are polished, some are still evolving, and some are mainly here because they taught me something useful."
         />
 
-        <SectionDivider />
-
-        <div class="mt-8 space-y-4">
+        <div class="project-list mt-10">
             {
                 projects.map((project) => (
-                    <ProjectCard
+                    <ProjectRow
                         title={project.data.title}
                         description={project.data.description}
                         technologies={project.data.technologies}
-                        status={project.data.status}
+                        designation={project.data.type}
+                        yearRail={formatYearRail(
+                            project.data.startDate,
+                            project.data.endDate,
+                        )}
                         href={`/projects/${project.id}`}
                     />
                 ))

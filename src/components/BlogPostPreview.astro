@@ -1,4 +1,6 @@
 ---
+import TagRow from "./TagRow.astro";
+
 type Props = {
     title: string;
     description: string;
@@ -8,8 +10,6 @@ type Props = {
 };
 
 const { title, description, date, tags = [], href } = Astro.props;
-
-const tagHref = (tag: string) => `/blog/tags/${encodeURIComponent(tag)}`;
 ---
 
 <article>
@@ -20,7 +20,9 @@ const tagHref = (tag: string) => `/blog/tags/${encodeURIComponent(tag)}`;
             </a>
         </h3>
 
-        <span class="flex items-baseline gap-x-3 text-sm font-semibold italic text-muted">
+        <span
+            class="flex items-baseline gap-x-3 text-sm font-semibold italic text-muted"
+        >
             <span class="metadata-separator" aria-hidden="true">•</span>
             <span>{date}</span>
         </span>
@@ -30,15 +32,7 @@ const tagHref = (tag: string) => `/blog/tags/${encodeURIComponent(tag)}`;
         {description}
     </p>
 
-    {
-        tags.length > 0 && (
-            <div class="font-medium mt-3 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                    <a href={tagHref(tag)} class="tag-pill">
-                        #{tag}
-                    </a>
-                ))}
-            </div>
-        )
-    }
+    <div class="mt-3">
+        <TagRow tags={tags} />
+    </div>
 </article>
