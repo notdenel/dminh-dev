@@ -27,7 +27,7 @@ const featuredProjects = (await getCollection("projects"))
   <main class="flex-1">
     <PageHeader
       title="hi, i'm daniel!"
-      lede="i recently graduated with a degree in computer science & engineering, and am currently navigating the world of cybersecurity, systems, and software. i enjoy understanding why things work, bend, or break."
+      lede="i recently graduated with a degree in computer science & engineering, and am currently navigating the world of cybersecurity, systems, and software. i enjoy understanding why things work, and why they don't."
     >
       <p class="typed-line">
         right now i'm <span class="typed-text" data-typed>{PHRASES[0]}</span><span
@@ -36,7 +36,7 @@ const featuredProjects = (await getCollection("projects"))
       </p>
 
       <p
-        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold tabular-nums text-muted"
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-ui font-semibold tabular-nums text-muted"
       >
         <span>san jose, ca</span>
 
@@ -56,11 +56,11 @@ const featuredProjects = (await getCollection("projects"))
 
     <section class="mt-16 space-y-6">
       <div class="flex items-baseline justify-between gap-4">
-        <h2 class="text-sm font-semibold lowercase tracking-wide text-muted">
+        <h2 class="text-ui font-semibold lowercase tracking-wide text-muted">
           blog
         </h2>
 
-        <a href="/blog" class="site-link text-sm font-semibold"> view all → </a>
+        <a href="/blog" class="site-link text-ui font-semibold"> view all → </a>
       </div>
 
       <div class="space-y-10">
@@ -80,11 +80,11 @@ const featuredProjects = (await getCollection("projects"))
 
     <section class="mt-16 space-y-6">
       <div class="flex items-baseline justify-between gap-4">
-        <h2 class="text-sm font-semibold lowercase tracking-wide text-muted">
+        <h2 class="text-ui font-semibold lowercase tracking-wide text-muted">
           projects
         </h2>
 
-        <a href="/projects" class="site-link text-sm font-semibold">
+        <a href="/projects" class="site-link text-ui font-semibold">
           view all →
         </a>
       </div>
@@ -151,6 +151,13 @@ import NowPlaying from "../components/NowPlaying.astro";
       let chars = PHRASES[0].length;
       let deleting = true;
 
+      // Timings are about impersonating a person, not about speed.
+      const TYPE = 45;
+      const HOLD = 2700; // sitting on a finished phrase, reading it back
+      const THINK = 1250; // sitting on "right now i'm", deciding what is next
+      const BACKSPACE = 320; // the beat before a held key starts repeating
+      const REPEAT = 18; // and then the rest run away at once
+
       const idle = (on: boolean) => caret.classList.toggle("is-idle", on);
 
       const tick = () => {
@@ -161,19 +168,30 @@ import NowPlaying from "../components/NowPlaying.astro";
         if (!deleting && chars === full.length) {
           idle(true);
           deleting = true;
-          setTimeout(tick, 1900);
+          setTimeout(tick, HOLD);
           return;
         }
 
         if (deleting && chars === 0) {
+          idle(true);
           deleting = false;
           phrase = (phrase + 1) % PHRASES.length;
-          setTimeout(tick, 350);
+          setTimeout(tick, THINK);
           return;
         }
 
         idle(false);
-        setTimeout(tick, deleting ? 22 : 45);
+
+        // One character goes, then a pause, then the key repeat catches up —
+        // which is what holding backspace actually feels like.
+        setTimeout(
+          tick,
+          !deleting
+            ? TYPE
+            : chars === full.length - 1
+              ? BACKSPACE
+              : REPEAT,
+        );
       };
 
       caret.classList.add("is-typing", "is-idle");

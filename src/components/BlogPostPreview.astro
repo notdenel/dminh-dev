@@ -14,14 +14,14 @@ const { title, description, date, tags = [], href } = Astro.props;
 
 <article>
     <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h3 class="text-lg font-semibold leading-snug text-ink">
+        <h3 class="text-subhead font-semibold text-ink">
             <a href={href} class="site-link-strong">
                 {title}
             </a>
         </h3>
 
         <span
-            class="flex items-baseline gap-x-3 text-sm font-semibold italic tabular-nums text-muted"
+            class="flex items-baseline gap-x-3 text-ui font-semibold italic tabular-nums text-muted"
         >
             <span class="metadata-separator" aria-hidden="true">•</span>
             <span>{date}</span>

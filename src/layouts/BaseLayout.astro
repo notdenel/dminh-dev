@@ -19,6 +19,19 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Both of these exist to paint the page dark as early as possible.
+         The meta applies before any stylesheet arrives; the inline rule
+         paints the background before the external sheet does. Unconfirmed
+         as the cause of the navigation flash — it could not be reproduced
+         here across eight navigation paths — but it is the documented fix
+         for a dark page flashing white before its CSS lands. -->
+    <meta name="color-scheme" content="dark" />
+    <style is:inline>
+      html {
+        background: #101014;
+      }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
 
