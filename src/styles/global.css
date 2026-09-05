@@ -2,6 +2,7 @@
 @import "@fontsource-variable/jost/wght-italic.css";
 @import "@fontsource-variable/source-sans-3";
 @import "@fontsource-variable/source-sans-3/wght-italic.css";
+@import "@fontsource-variable/instrument-sans";
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "tailwindcss";
 
@@ -41,12 +42,17 @@
     --color-surface: rgba(255, 255, 255, 0.035);
     --color-line: rgba(255, 255, 255, 0.2);
 
-    /* TYPEFACES — three, by job.
-       ui = interface and headings, copy = prose, data = machine-readable
-       metadata (dates, status, technologies, the project year rail). */
+    /* TYPEFACES — four, by job.
+       ui     = the voice: the h1, section headings, every title
+       chrome = small interface text, where ui is widest and least legible
+       copy   = prose
+       data   = machine-readable metadata (dates, technologies, the rail) */
     --font-ui:
         "Jost Variable", "Jost", ui-sans-serif, system-ui, -apple-system,
         BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-chrome:
+        "Instrument Sans Variable", "Instrument Sans", ui-sans-serif,
+        system-ui, sans-serif;
     --font-copy:
         "Source Sans 3 Variable", "Source Sans 3", ui-sans-serif, system-ui,
         sans-serif;
@@ -141,6 +147,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #453f61;
+}
+
+/* THE CHROME FACE
+   Jost stays the voice of the site — it keeps the display, the section
+   headings and every title, which is where its character is actually seen.
+   Instrument Sans takes only the small interface text, which is the one
+   place Jost's geometry was costing legibility at 15px. */
+:is(header, footer),
+.site-link,
+.tag-link,
+.metadata-row,
+.now-playing {
+    font-family: var(--font-chrome);
 }
 
 .site-link {
