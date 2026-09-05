@@ -7,6 +7,7 @@ import BlogPostPreview from "../components/BlogPostPreview.astro";
 import ProjectRow from "../components/ProjectRow.astro";
 import { getCollection } from "astro:content";
 import { formatDisplayDate, formatYearRail } from "../utils/formatDate";
+import { PHRASES } from "../utils/phrases";
 
 const recentBlogPosts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -27,10 +28,24 @@ const featuredProjects = (await getCollection("projects"))
       title="hi, i'm daniel!"
       lede="i recently graduated with a degree in computer science & engineering, and am currently navigating the world of cybersecurity, systems, and software. i enjoy understanding why things work, bend, or break."
     >
+      <p class="typed-line">
+        right now i'm <span class="typed-text" data-typed>{PHRASES[0]}</span><span
+          class="caret"
+          aria-hidden="true"></span>
+      </p>
+
       <p
         class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-muted"
       >
         <span>san jose, ca</span>
+
+        {/* Both start hidden: without JS the row reads "san jose, ca • open
+            to work" with no dangling separator. */}
+        <span class="metadata-separator" data-clock aria-hidden="true" hidden>
+          •
+        </span>
+        <span data-clock hidden></span>
+
         <span class="metadata-separator" aria-hidden="true">•</span>
         <span>open to work</span>
       </p>
@@ -93,3 +108,72 @@ const featuredProjects = (await getCollection("projects"))
 
   <Footer />
 </BaseLayout>
+
+<script>
+  import { PHRASES } from "../utils/phrases";
+
+  // ── his local time ──────────────────────────────────────────────────────
+  // A static build bakes the build time, so this has to be client-side. It
+  // renders once rather than ticking: a clock that updates in front of the
+  // reader would spend loud-flair budget the typed line already owns.
+  const clock = document.querySelectorAll("[data-clock]");
+
+  if (clock.length) {
+    const time = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      hour: "numeric",
+      minute: "2-digit",
+    })
+      .format(new Date())
+      .toLowerCase();
+
+    clock[clock.length - 1].textContent = time;
+    clock.forEach((el) => ((el as HTMLElement).hidden = false));
+  }
+
+  // ── the typed line ──────────────────────────────────────────────────────
+  const typed = document.querySelector("[data-typed]");
+  const caret = typed?.nextElementSibling;
+
+  if (typed && caret) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Every phrase at once, no caret. A reduced-motion reader should lose
+      // the animation, not the content it was carrying.
+      typed.textContent = PHRASES.join(" · ");
+    } else {
+      // The markup already shows PHRASES[0], so the loop opens on the pause
+      // after typing it rather than clearing the line and reflowing.
+      let phrase = 0;
+      let chars = PHRASES[0].length;
+      let deleting = true;
+
+      const idle = (on: boolean) => caret.classList.toggle("is-idle", on);
+
+      const tick = () => {
+        const full = PHRASES[phrase];
+        chars += deleting ? -1 : 1;
+        typed.textContent = full.slice(0, chars);
+
+        if (!deleting && chars === full.length) {
+          idle(true);
+          deleting = true;
+          setTimeout(tick, 1900);
+          return;
+        }
+
+        if (deleting && chars === 0) {
+          deleting = false;
+          phrase = (phrase + 1) % PHRASES.length;
+          setTimeout(tick, 350);
+          return;
+        }
+
+        idle(false);
+        setTimeout(tick, deleting ? 22 : 45);
+      };
+
+      caret.classList.add("is-typing", "is-idle");
+      setTimeout(tick, 1900);
+    }
+  }
+</script>
