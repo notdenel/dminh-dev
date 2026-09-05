@@ -19,6 +19,13 @@ export const formatDisplayDate = (date: Date) => {
   return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
 };
 
+// Under a year heading the year on each row is noise, so the list drops it.
+// getUTC* throughout: a date-only frontmatter string is midnight UTC, and
+// reading it locally shifts the day back in any negative-offset zone.
+export const formatDayMonth = (date: Date) => {
+  return `${months[date.getUTCMonth()]} ${date.getUTCDate()}`;
+};
+
 export const formatMonthYear = (date: string) => {
   const [year, month] = date.split("-");
   const monthLabel = months[Number(month) - 1];

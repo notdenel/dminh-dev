@@ -29,7 +29,10 @@
     --color-ink: #f2f2f4;
     --color-soft: #b9bac6;
     --color-muted: #878899;
-    --color-faint: #6f7080;
+    /* #6f7080 measured 3.89:1 on --color-page and failed WCAG AA, which took
+       the project year rail, the now-playing line and the image captions with
+       it. #7d7e8e is the smallest lift that clears 4.5 — measured 4.74:1. */
+    --color-faint: #7d7e8e;
 
     /* accent roles — the names components use */
     --color-accent: var(--color-accent-500);
@@ -165,9 +168,17 @@ body {
 :is(header, footer),
 .site-link,
 .tag-link,
-.metadata-row,
 .now-playing {
     font-family: var(--font-chrome);
+}
+
+/* Facts, not prose. The data face is how this site already says
+   "machine-readable" — the project year rail and the tech line both use it —
+   so the row stops competing with the two prose lines above it. */
+.metadata-row {
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-weight: 400;
 }
 
 .site-link {
@@ -303,7 +314,7 @@ body {
 .typed-line {
     color: var(--color-muted);
     font-family: var(--font-copy);
-    font-size: var(--text-subhead);
+    font-size: var(--text-meta);
     line-height: 1.72;
     min-height: 1.72em;
 }
@@ -318,7 +329,7 @@ body {
 }
 
 .typed-text {
-    color: var(--color-soft);
+    color: var(--color-ink);
 }
 
 /* A word inside a phrase that the typewriter turns into a link once it has
@@ -372,6 +383,18 @@ body {
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: lowercase;
+}
+
+/* YEAR HEADINGS
+   The listing groups by year so each row can drop the year from its own
+   date. Set in the data face at the rail's weight: it is a coordinate, not a
+   title, and it must not outrank the post titles underneath it. */
+.year-heading {
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-ui);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
 }
 
 /* TAGS, UNBOXED

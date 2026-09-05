@@ -2,12 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
-import SectionDivider from "../../components/SectionDivider.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import BlogPostPreview from "../../components/BlogPostPreview.astro";
 import TagRow from "../../components/TagRow.astro";
 import { getCollection } from "astro:content";
-import { formatDisplayDate } from "../../utils/formatDate";
+import { formatDayMonth } from "../../utils/formatDate";
+import { groupByYear } from "../../utils/groupByYear";
 
 const posts = (await getCollection("blog"))
     .filter((post) => !post.data.draft)
@@ -16,6 +16,8 @@ const posts = (await getCollection("blog"))
 const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
     (a, b) => a.localeCompare(b),
 );
+
+const postsByYear = groupByYear(posts, (post) => post.data.pubDate);
 ---
 
 <BaseLayout
@@ -43,21 +45,27 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
             )
         }
 
-        <SectionDivider />
-
-        <section class="mt-section space-y-10">
+        <div class="mt-section space-y-section">
             {
-                posts.map((post) => (
-                    <BlogPostPreview
-                        title={post.data.title}
-                        description={post.data.description}
-                        date={formatDisplayDate(post.data.pubDate)}
-                        tags={post.data.tags}
-                        href={`/blog/${post.id}`}
-                    />
+                postsByYear.map(([year, yearPosts]) => (
+                    <section class="space-y-6">
+                        <h2 class="year-heading">{year}</h2>
+
+                        <div class="space-y-10">
+                            {yearPosts.map((post) => (
+                                <BlogPostPreview
+                                    title={post.data.title}
+                                    description={post.data.description}
+                                    date={formatDayMonth(post.data.pubDate)}
+                                    tags={post.data.tags}
+                                    href={`/blog/${post.id}`}
+                                />
+                            ))}
+                        </div>
+                    </section>
                 ))
             }
-        </section>
+        </div>
     </main>
 
     <Footer />

@@ -5,6 +5,7 @@ import {
   formatMonthYear,
   formatMonthYearRange,
   formatYearRail,
+  formatDayMonth,
 } from "./formatDate.ts";
 
 // new Date("2026-07-11") is midnight UTC, so the day-shift assertion below can
@@ -61,4 +62,13 @@ test("formatYearRail abbreviates the end of a multi-year range", () => {
 
 test("formatYearRail returns undefined without a start date", () => {
   assert.equal(formatYearRail(undefined, "2026-06"), undefined);
+});
+
+test("formatDayMonth drops the year for a post under a year heading", () => {
+  assert.equal(formatDayMonth(new Date("2026-07-11")), "jul 11");
+  assert.equal(formatDayMonth(new Date("2026-09-01")), "sept 1");
+});
+
+test("formatDayMonth does not shift the day in negative UTC offsets", () => {
+  assert.equal(formatDayMonth(new Date("2026-01-01")), "jan 1");
 });
