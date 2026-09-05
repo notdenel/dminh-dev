@@ -4,6 +4,8 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import SectionDivider from "../../components/SectionDivider.astro";
 import ArticleHeader from "../../components/ArticleHeader.astro";
+import ReadingProgress from "../../components/ReadingProgress.astro";
+import HeadingAnchors from "../../components/HeadingAnchors.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { formatMonthYearRange } from "../../utils/formatDate";
@@ -34,6 +36,9 @@ const dateRange = formatMonthYearRange(
     title={`${project.data.title} | dminh.dev`}
     description={project.data.description}
 >
+    <ReadingProgress />
+    <HeadingAnchors />
+
     <Header />
 
     <main class="flex-1">
