@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Header from "../../../components/Header.astro";
 import Footer from "../../../components/Footer.astro";
+import SectionDivider from "../../../components/SectionDivider.astro";
 import PageHeader from "../../../components/PageHeader.astro";
 import BlogPostPreview from "../../../components/BlogPostPreview.astro";
 import { getCollection } from "astro:content";
@@ -47,7 +48,9 @@ const postsByYear = groupByYear(posts, (post) => post.data.pubDate);
             lede={`blog posts tagged with #${tag}`}
         />
 
-        <div class="mt-section space-y-section">
+        <SectionDivider />
+
+        <div class="space-y-section">
             {
                 postsByYear.map(([year, yearPosts]) => (
                     <section class="space-y-6">

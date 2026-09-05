@@ -5,6 +5,7 @@ pubDate: 2026-07-11
 # updatedDate: 
 tags:
   - personal
+  - verbose
 draft: false
 ---
 
