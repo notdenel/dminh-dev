@@ -44,10 +44,24 @@ const toTrack = (item: any): Track | undefined => {
   };
 };
 
+// Vercel puts real environment variables on process.env at runtime, which is
+// what we want in production: rotating the secret there does not need a
+// rebuild. A local .env does not reach process.env under `astro dev`, so it
+// is read through import.meta.env instead — but only behind import.meta.env
+// .DEV, which is replaced by the literal `false` in a production build so the
+// whole block is dead code and no secret is ever inlined into the bundle.
+const dev = import.meta.env.DEV
+  ? {
+      id: import.meta.env.SPOTIFY_CLIENT_ID as string | undefined,
+      secret: import.meta.env.SPOTIFY_CLIENT_SECRET as string | undefined,
+      refreshToken: import.meta.env.SPOTIFY_REFRESH_TOKEN as string | undefined,
+    }
+  : undefined;
+
 const accessToken = async () => {
-  const id = process.env.SPOTIFY_CLIENT_ID;
-  const secret = process.env.SPOTIFY_CLIENT_SECRET;
-  const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN;
+  const id = process.env.SPOTIFY_CLIENT_ID ?? dev?.id;
+  const secret = process.env.SPOTIFY_CLIENT_SECRET ?? dev?.secret;
+  const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN ?? dev?.refreshToken;
 
   if (!id || !secret || !refreshToken) return undefined;
 
