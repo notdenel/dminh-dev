@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { buildCommit } from "../utils/buildInfo";
 
 type Props = {
   title?: string;
@@ -45,6 +46,17 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
     >
       <slot />
     </div>
+
+    <!-- for anyone who opens the console -->
+    <script is:inline define:vars={{ buildCommit }}>
+      console.log(
+        `%cdminh.dev%c
+built from ${buildCommit ?? "an unknown commit"} · github.com/notdenel/dminh-dev
+if you're reading this, we'd probably get along. say hi: dminhsims@gmail.com`,
+        "color:#aa8ee1;font:600 15px ui-sans-serif,system-ui,sans-serif",
+        "color:#878899;font:13px ui-monospace,monospace",
+      );
+    </script>
 
     <!-- global script to handle back buttons across site -->
     <script>
