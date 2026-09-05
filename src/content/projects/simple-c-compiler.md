@@ -6,8 +6,8 @@ technologies:
   - x86 Assembly
   - Linux
   - GDB
-status: "Completed"
-type: "Coursework"
+status: "completed"
+type: "coursework"
 featured: true
 order: 2
 startDate: 2026-03

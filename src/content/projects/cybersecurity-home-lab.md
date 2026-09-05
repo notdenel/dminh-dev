@@ -6,8 +6,8 @@ technologies:
   - Windows
   - VMware
   - Wireshark
-status: "Ongoing"
-type: "Personal"
+status: "ongoing"
+type: "personal"
 featured: true
 order: 1
 startDate: 2025-06

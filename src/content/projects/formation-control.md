@@ -6,8 +6,8 @@ technologies:
   - MATLAB/Simulink
   - SLAM/AMCL
   - Raspberry Pi
-status: "Completed"
-type: "Coursework"
+status: "completed"
+type: "capstone"
 featured: true
 order: 3
 startDate: 2025-09

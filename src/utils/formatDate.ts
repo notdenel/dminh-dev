@@ -1,16 +1,18 @@
+// CAP-2: chrome is lowercase. `sept` keeps four characters —
+// nothing stacks dates into a column, so the extra width costs nothing.
 const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sept",
-  "Oct",
-  "Nov",
-  "Dec",
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sept",
+  "oct",
+  "nov",
+  "dec",
 ];
 
 export const formatDisplayDate = (date: Date) => {
