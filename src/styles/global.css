@@ -524,6 +524,14 @@ body {
     margin-top: 1.25rem;
 }
 
+/* Headings take the UI face wherever they appear. Inside the article they
+   were inheriting the prose face from the container, which made the only
+   headings on the site that did not share a voice with the rest of it.
+   h4-h6 are unused today and covered so they cannot drift later. */
+.article-content :is(h2, h3, h4, h5, h6) {
+    font-family: var(--font-ui);
+}
+
 .article-content h2 {
     margin-top: 2.5rem;
     color: var(--color-ink);
@@ -646,7 +654,7 @@ body {
 .article-content p:has(> img)+p em {
     display: block;
     color: var(--color-faint);
-    font-size: 0.875rem;
+    font-size: var(--text-ui);
     line-height: 1.6;
     text-align: center;
 }
@@ -663,9 +671,12 @@ body {
     margin-top: 0.75rem;
 }
 
+/* A 15px label rather than a heading, so it takes the chrome face like
+   every other label on the site — not the UI face the headings use. */
 .article-content .callout-title {
     color: var(--color-ink);
-    font-size: 0.875rem;
+    font-family: var(--font-chrome);
+    font-size: var(--text-ui);
     font-weight: 600;
     text-transform: lowercase;
 }
