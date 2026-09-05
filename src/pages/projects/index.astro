@@ -27,7 +27,7 @@ const projects = (await getCollection("projects")).sort(
             lede="a small archive of projects from school, personal learning, and independent tinkering. some are polished, some are still evolving, and some are mainly here because they taught me something useful."
         />
 
-        <div class="project-list project-list-flush mt-10">
+        <div class="project-list project-list-flush mt-group">
             {
                 projects.map((project) => (
                     <ProjectRow

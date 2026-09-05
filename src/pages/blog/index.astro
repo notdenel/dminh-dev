@@ -33,8 +33,8 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
 
         {
             tags.length > 0 && (
-                <section class="mt-8 space-y-3">
-                    <h2 class="text-ui font-semibold lowercase tracking-wide text-muted">
+                <section class="mt-group space-y-3">
+                    <h2 class="section-label">
                         tags
                     </h2>
 
@@ -45,7 +45,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
 
         <SectionDivider />
 
-        <section class="mt-8 space-y-10">
+        <section class="mt-section space-y-10">
             {
                 posts.map((post) => (
                     <BlogPostPreview

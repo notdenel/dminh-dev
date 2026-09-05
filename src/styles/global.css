@@ -78,7 +78,7 @@
     --text-subhead: 1.1875rem;
     --text-subhead--line-height: 1.45;
     --text-body: 1.15rem;
-    --text-body--line-height: 1.85;
+    --text-body--line-height: 1.7;
     --text-meta: 1.0625rem;
     --text-meta--line-height: 1.65;
     --text-ui: 0.9375rem;
@@ -87,9 +87,17 @@
     --text-micro--line-height: 1.25;
 
     /* SECTION RHYTHM — grouped, not uniform. `group` separates related
-       blocks, `section` separates unrelated ones. */
+       blocks, `section` separates unrelated ones. Tailwind turns each of
+       these into an `mt-group` / `mt-section` utility, which is the point:
+       the markup names the relationship instead of picking a number, and
+       these two lines retune the whole site's rhythm.
+
+       `section` has to clear the largest gap *inside* a section by a wide
+       margin or the sections read as one column. Inside, the widest is the
+       40px group step, so 96px is 2.4x that. At the old 64px it was 1.6x
+       and the page read as continuous. */
     --spacing-group: 2.5rem;
-    --spacing-section: 4rem;
+    --spacing-section: 6rem;
 
     /* RADIUS */
     --radius-token: 0.35rem;
@@ -300,6 +308,15 @@ body {
     min-height: 1.72em;
 }
 
+/* THE LEDE
+   Body size, but noticeably tighter than body leading. Prose is set loose
+   because it is read line after line for minutes; a lede is read once, and
+   at prose leading its three lines occupy more vertical space than anything
+   else on the page and read as a wall. */
+.page-lede {
+    line-height: 1.55;
+}
+
 .typed-text {
     color: var(--color-soft);
 }
@@ -342,6 +359,19 @@ body {
     50% {
         opacity: 0;
     }
+}
+
+/* SECTION LABELS
+   Not made bigger — the list titles they introduce are 19px, and a label
+   that outsizes its own content inverts the hierarchy. Made *unlike*
+   instead: the accent colour, which nothing else on the page wears as a
+   whole word, plus tracking. Size stays below the content it labels. */
+.section-label {
+    color: var(--color-accent);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
 }
 
 /* TAGS, UNBOXED
@@ -535,8 +565,19 @@ body {
     line-height: var(--text-body--line-height);
 }
 
+/* Block separation has to beat the line gap inside a block or paragraphs
+   do not read as separate. At 1.7 leading on 18.4px the line gap is 31px,
+   so 24px of margin puts block-to-block at 55px — 1.77x the line gap. At
+   the old 1.85/20px it was 1.59x and the paragraphs ran together. */
 .article-content>*+* {
-    margin-top: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+/* A heading belongs to what follows it, so it sits far from the block above
+   and close to the block below. Without this the gap was 40px above and
+   24px below — near enough to symmetric that headings floated. */
+.article-content :is(h2, h3, h4, h5, h6)+* {
+    margin-top: 0.75rem;
 }
 
 /* Headings take the UI face wherever they appear. Inside the article they
@@ -548,7 +589,7 @@ body {
 }
 
 .article-content h2 {
-    margin-top: 2.5rem;
+    margin-top: 3.5rem;
     color: var(--color-ink);
     font-size: var(--text-title);
     line-height: var(--text-title--line-height);
@@ -557,7 +598,7 @@ body {
 }
 
 .article-content h3 {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     color: var(--color-ink);
     font-size: var(--text-heading);
     line-height: var(--text-heading--line-height);
