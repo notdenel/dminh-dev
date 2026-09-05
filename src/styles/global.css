@@ -1,27 +1,98 @@
-@import "@fontsource-variable/plus-jakarta-sans";
-@import "@fontsource-variable/plus-jakarta-sans/wght-italic.css";
+@import "@fontsource-variable/jost";
+@import "@fontsource-variable/jost/wght-italic.css";
 @import "@fontsource-variable/source-sans-3";
 @import "@fontsource-variable/source-sans-3/wght-italic.css";
+@import "@fontsource/ibm-plex-mono/400.css";
 @import "tailwindcss";
 
+/* ACCENT RAMP
+   Hue 260deg. 500 is the base: the smallest rotation off the original
+   #6969cf (240deg) that clears WCAG AA 4.5:1 against --color-page.
+   240deg measured 4.08:1 and failed; 258deg 4.47:1; 260deg 4.53:1.
+   200-300 are legible ON 600-700, so the ends pair with each other.
+
+   `static` so every step is emitted even while unused. Without it Tailwind
+   tree-shakes the unreferenced steps and a raw var(--color-accent-600) in
+   hand-written CSS resolves to nothing, silently. */
+@theme static {
+    --color-accent-200: #d7cdea;
+    --color-accent-300: #c1afe4;
+    --color-accent-400: #aa8ee1;
+    --color-accent-500: #8b69ce;
+    --color-accent-600: #6842b3;
+    --color-accent-700: #4e3384;
+}
+
 @theme {
+    /* NEUTRALS */
     --color-ink: #f2f2f4;
     --color-soft: #b9bac6;
     --color-muted: #878899;
     --color-faint: #6f7080;
 
-    --color-accent: #6969cf;
-    --color-accent-hi: #8b8be6;
-    --color-accent-muted: rgba(105, 105, 207, 0.18);
-    --color-accent-surface: rgba(105, 105, 207, 0.08);
+    /* accent roles — the names components use */
+    --color-accent: var(--color-accent-500);
+    --color-accent-hi: var(--color-accent-400);
+    --color-accent-muted: rgba(139, 105, 206, 0.18);
+    --color-accent-surface: rgba(139, 105, 206, 0.08);
 
+    /* SURFACES */
     --color-page: #101014;
     --color-surface: rgba(255, 255, 255, 0.035);
-    --color-line: rgba(255, 255, 255, 0.13);
+    --color-line: rgba(255, 255, 255, 0.2);
+
+    /* TYPEFACES — three, by job.
+       ui = interface and headings, copy = prose, data = machine-readable
+       metadata (dates, status, technologies, the project year rail). */
+    --font-ui:
+        "Jost Variable", "Jost", ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-copy:
+        "Source Sans 3 Variable", "Source Sans 3", ui-sans-serif, system-ui,
+        sans-serif;
+    --font-data:
+        "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+        monospace;
+
+    /* TYPE SCALE — seven steps, named by role, nothing off-scale.
+       Declared here in phase 1; components adopt them in phase 2. */
+    --text-display: 2.25rem;
+    --text-display--line-height: 1.1;
+    --text-title: 1.5rem;
+    --text-title--line-height: 1.3;
+    --text-heading: 1.2rem;
+    --text-heading--line-height: 1.4;
+    --text-subhead: 1.0625rem;
+    --text-subhead--line-height: 1.5;
+    --text-body: 1.05rem;
+    --text-body--line-height: 1.9;
+    --text-meta: 0.875rem;
+    --text-meta--line-height: 1.5;
+    --text-micro: 0.75rem;
+    --text-micro--line-height: 1.25;
+
+    /* SECTION RHYTHM — grouped, not uniform. `group` separates related
+       blocks, `section` separates unrelated ones. */
+    --spacing-group: 2.5rem;
+    --spacing-section: 4rem;
+
+    /* RADIUS */
+    --radius-token: 0.35rem;
+    --radius-panel: 0.75rem;
 }
 
 :root {
     color-scheme: dark;
+
+    /* MOTION — one duration and one easing for the whole site. */
+    --motion: 160ms;
+    --ease: ease;
+
+    /* Themed to the palette rather than left as the browser's own chrome.
+       The scrollbar stays: it is a real affordance people drag, and on
+       Windows it is always visible rather than an overlay. */
+    scrollbar-width: thin;
+    scrollbar-color: #34304a var(--color-page);
 }
 
 html {
@@ -31,15 +102,7 @@ html {
 body {
     background: var(--color-page);
     color: var(--color-ink);
-    font-family:
-        "Plus Jakarta Sans Variable",
-        "Plus Jakarta Sans",
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+    font-family: var(--font-ui);
 }
 
 ::selection {
@@ -47,18 +110,27 @@ body {
     color: var(--color-ink);
 }
 
-.font-copy {
-    font-family:
-        "Source Sans 3 Variable",
-        "Source Sans 3",
-        ui-sans-serif,
-        system-ui,
-        sans-serif;
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-page);
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #34304a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #453f61;
 }
 
 .site-link {
     color: var(--color-muted);
-    transition: color 160ms ease;
+    transition: color var(--motion) var(--ease);
 }
 
 .site-link:hover {
@@ -67,7 +139,7 @@ body {
 
 .site-link-strong {
     color: var(--color-ink);
-    transition: color 160ms ease;
+    transition: color var(--motion) var(--ease);
 }
 
 .site-link-strong:hover {
@@ -81,8 +153,8 @@ body {
 .site-icon-link {
     color: var(--color-faint);
     transition:
-        color 160ms ease,
-        transform 160ms ease;
+        color var(--motion) var(--ease),
+        transform var(--motion) var(--ease);
 }
 
 .site-icon-link:hover {
@@ -108,9 +180,9 @@ body {
 
 .tag-pill {
     transition:
-        border-color 160ms ease,
-        background-color 160ms ease,
-        color 160ms ease;
+        border-color var(--motion) var(--ease),
+        background-color var(--motion) var(--ease),
+        color var(--motion) var(--ease);
 }
 
 .tag-pill:hover {
@@ -122,12 +194,12 @@ body {
 .project-card .card-surface {
     border-color: var(--color-line);
     transition:
-        border-color 160ms ease,
-        background-color 160ms ease;
+        border-color var(--motion) var(--ease),
+        background-color var(--motion) var(--ease);
 }
 
 .project-card-title {
-    transition: color 160ms ease;
+    transition: color var(--motion) var(--ease);
 }
 
 .project-card:hover .card-surface {
@@ -149,19 +221,26 @@ body {
     font-style: normal;
 }
 
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* ARTICLE MARKDOWN STYLING */
 
 .article-content {
     color: var(--color-soft);
-    font-family:
-        "Source Sans 3 Variable",
-        "Source Sans 3",
-        ui-sans-serif,
-        system-ui,
-        sans-serif;
-    font-size: 1.05rem;
+    font-family: var(--font-copy);
+    font-size: var(--text-body);
     font-weight: 400;
-    line-height: 1.9;
+    line-height: var(--text-body--line-height);
 }
 
 .article-content>*+* {
@@ -171,8 +250,8 @@ body {
 .article-content h2 {
     margin-top: 2.5rem;
     color: var(--color-ink);
-    font-size: 1.5rem;
-    line-height: 1.3;
+    font-size: var(--text-title);
+    line-height: var(--text-title--line-height);
     font-weight: 600;
     letter-spacing: -0.025em;
 }
@@ -180,8 +259,8 @@ body {
 .article-content h3 {
     margin-top: 2rem;
     color: var(--color-ink);
-    font-size: 1.2rem;
-    line-height: 1.4;
+    font-size: var(--text-heading);
+    line-height: var(--text-heading--line-height);
     font-weight: 600;
 }
 
@@ -192,11 +271,11 @@ body {
 .article-content a {
     color: var(--color-ink);
     text-decoration-line: underline;
-    text-decoration-color: rgba(105, 105, 207, 0.45);
+    text-decoration-color: var(--color-accent-muted);
     text-underline-offset: 0.18em;
     transition:
-        color 160ms ease,
-        text-decoration-color 160ms ease;
+        color var(--motion) var(--ease),
+        text-decoration-color var(--motion) var(--ease);
 }
 
 .article-content a:hover {
@@ -238,17 +317,20 @@ body {
 
 .article-content code {
     border: 1px solid var(--color-line);
-    border-radius: 0.35rem;
+    border-radius: var(--radius-token);
     background: var(--color-surface);
     padding: 0.15rem 0.35rem;
     color: var(--color-ink);
-    font-size: 0.9em;
+    font-family: var(--font-data);
+    font-size: 0.85em;
 }
 
+/* The !important is load-bearing: it suppresses the Shiki theme's own
+   inline background. It must survive any edit to this rule. */
 .article-content pre {
     overflow-x: auto;
     border: 1px solid var(--color-line);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-panel);
     background: var(--color-surface) !important;
     padding: 1rem;
 }
@@ -294,7 +376,7 @@ body {
 
 .article-content .callout {
     border: 1px solid var(--color-line);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-panel);
     background: var(--color-surface);
     padding: 1rem 1.25rem;
     color: var(--color-soft);
