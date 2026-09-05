@@ -27,10 +27,10 @@ const featuredProjects = (await getCollection("projects"))
   <main class="flex-1">
     <PageHeader
       title="hi, i'm daniel!"
-      lede="i recently graduated with a degree in computer science & engineering, and am currently navigating the world of cybersecurity, systems, and software. i enjoy understanding why things work, and why they don't."
+      lede="i recently graduated in computer science & engineering, and am navigating the world of cybersecurity, systems, and software. i enjoy understanding why things work, and why they don't."
     >
       <p class="typed-line">
-        right now i'm <span class="typed-text" data-typed>{PHRASES[0]}</span><span
+        right now i'm <span class="typed-text" data-typed>{PHRASES[0].text}</span><span
           class="caret"
           aria-hidden="true"></span>
       </p>
@@ -113,18 +113,18 @@ const featuredProjects = (await getCollection("projects"))
 </BaseLayout>
 
 <script>
-  import { PHRASES } from "../utils/phrases";
+  import { PHRASES, type Phrase } from "../utils/phrases";
 
   // ── his local time ──────────────────────────────────────────────────────
-  // A static build bakes the build time, so this has to be client-side, and
-  // it has to tick: a clock that is only right at page load is a timestamp
-  // wearing a clock's clothes.
+  // A static build bakes the build time, so this has to be client-side. It
+  // wakes on the minute boundary rather than on an interval, so the digits
+  // change at the moment they actually change and never sit stale.
   const clock = document.querySelectorAll("[data-clock]");
 
   if (clock.length) {
     const face = clock[clock.length - 1];
 
-    const render = () => {
+    const showTime = () => {
       face.textContent = new Intl.DateTimeFormat("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
@@ -134,12 +134,17 @@ const featuredProjects = (await getCollection("projects"))
         .toLowerCase();
     };
 
-    render();
+    const nextMinute = () => {
+      showTime();
+      setTimeout(nextMinute, 60_000 - (Date.now() % 60_000) + 200);
+    };
+
+    nextMinute();
     clock.forEach((el) => ((el as HTMLElement).hidden = false));
 
-    // Well inside a minute, so the displayed minute is never stale for long,
-    // and cheap enough that the interval is not worth aligning to :00.
-    setInterval(render, 15_000);
+    // A background tab has its timers throttled, so the wake-up above can be
+    // late by minutes. Re-read on the way back rather than trust it.
+    document.addEventListener("visibilitychange", showTime);
   }
 
   // ── the typed line ──────────────────────────────────────────────────────
@@ -150,19 +155,19 @@ const featuredProjects = (await getCollection("projects"))
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // Every phrase at once, no caret. A reduced-motion reader should lose
       // the animation, not the content it was carrying.
-      typed.textContent = PHRASES.join(" · ");
+      typed.textContent = PHRASES.map((p) => p.text).join(" · ");
     } else {
       // The markup already shows PHRASES[0], so the loop opens on the pause
       // after typing it rather than clearing the line and reflowing.
       let phrase = 0;
-      let chars = PHRASES[0].length;
+      let chars = PHRASES[0].text.length;
       let deleting = true;
 
       // Timings are about impersonating a person, not about speed.
       const TYPE = 45;
       const HOLD = 2700; // sitting on a finished phrase, reading it back
       const THINK = 1250; // sitting on "right now i'm", deciding what is next
-      const DOT = 300; // between the periods of an ellipsis
+      const DOT = 300; // before each period of an ellipsis
       const ELLIPSIS = 1900; // the beat the ellipsis is there to buy
       // Windows' own key-repeat settings, read off this machine:
       // HKCU\Control Panel\Keyboard KeyboardDelay=1, KeyboardSpeed=31.
@@ -171,21 +176,51 @@ const featuredProjects = (await getCollection("projects"))
 
       const idle = (on: boolean) => caret.classList.toggle("is-idle", on);
 
-      // What to wait after having just written character `chars` of `full`.
-      const pause = (full: string, chars: number) => {
-        if (deleting) return chars === full.length - 1 ? BACKSPACE : REPEAT;
-        if (full[chars - 1] !== ".") return TYPE;
-        if (full[chars] === ".") return DOT; // more of the run still to come
-        if (full[chars - 2] === ".") return ELLIPSIS; // the run just closed
+      // A general rule, not a special case for one phrase: any run of two or
+      // more periods anywhere in any phrase is typed slowly and held on. A
+      // lone period ending a sentence is not a run and is typed normally.
+      const inRun = (s: string, i: number) =>
+        s[i] === "." && (s[i + 1] === "." || s[i - 1] === ".");
+
+      // What to wait after having just written character `chars` of `text`.
+      const pause = (text: string, chars: number) => {
+        if (deleting) return chars === text.length - 1 ? BACKSPACE : REPEAT;
+        if (inRun(text, chars)) return DOT; // a period of a run comes next
+        if (inRun(text, chars - 1)) return ELLIPSIS; // the run just closed
         return TYPE;
       };
 
-      const tick = () => {
-        const full = PHRASES[phrase];
-        chars += deleting ? -1 : 1;
-        typed.textContent = full.slice(0, chars);
+      // The linked word only becomes a real link once it is whole — a
+      // half-typed href is not something to hand a reader.
+      const paint = (p: Phrase, chars: number) => {
+        const shown = p.text.slice(0, chars);
+        const start = p.link ? p.text.indexOf(p.link.word) : -1;
 
-        if (!deleting && chars === full.length) {
+        if (!p.link || start < 0 || chars <= start) {
+          typed.textContent = shown;
+          return;
+        }
+
+        const end = start + p.link.word.length;
+        const mark = document.createElement("a");
+        mark.className = "typed-mark";
+        mark.textContent = shown.slice(start, end);
+
+        if (chars >= end) {
+          mark.href = p.link.href;
+          mark.target = "_blank";
+          mark.rel = "noreferrer";
+        }
+
+        typed.replaceChildren(shown.slice(0, start), mark, shown.slice(end));
+      };
+
+      const tick = () => {
+        const p = PHRASES[phrase];
+        chars += deleting ? -1 : 1;
+        paint(p, chars);
+
+        if (!deleting && chars === p.text.length) {
           idle(true);
           deleting = true;
           setTimeout(tick, HOLD);
@@ -202,7 +237,7 @@ const featuredProjects = (await getCollection("projects"))
 
         // One character goes, then a pause, then the key repeat catches up —
         // which is what holding backspace actually feels like.
-        const wait = pause(full, chars);
+        const wait = pause(p.text, chars);
         idle(wait === ELLIPSIS);
         setTimeout(tick, wait);
       };

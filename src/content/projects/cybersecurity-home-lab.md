@@ -1,6 +1,6 @@
 ---
 title: "Cybersecurity Home Lab"
-description: "An isolated lab using Linux and Windows virtual machines, VMware, Wireshark, etc. to practice networking, system hardening, and defensive workflows."
+description: "An isolated Linux and Windows VM lab for practising networking, system hardening, and defensive workflows."
 technologies:
   - Linux
   - Windows

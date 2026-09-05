@@ -304,6 +304,20 @@ body {
     color: var(--color-soft);
 }
 
+/* A word inside a phrase that the typewriter turns into a link once it has
+   finished typing it. Before that the anchor has no href, so it is inert and
+   unfocusable on its own — no styling needed to say so. */
+.typed-mark {
+    color: var(--color-accent-hi);
+    text-decoration: none;
+}
+
+.typed-mark[href]:hover,
+.typed-mark[href]:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
 /* Hidden until the typewriter is actually running: with JS off or reduced
    motion set there is nothing for a caret to sit after. */
 .caret {
@@ -413,6 +427,13 @@ body {
 
 .project-row:hover {
     background: var(--color-accent-surface);
+}
+
+/* On /projects the footer follows the list directly, so the list ends on the
+   footer's rule instead of drawing a second one just above it. The homepage
+   keeps its own closing rule, because a section follows it there. */
+.project-list-flush .project-row:last-child::after {
+    content: none;
 }
 
 .project-row-rail {

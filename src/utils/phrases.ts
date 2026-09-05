@@ -4,15 +4,26 @@
 //
 // "looking for entry-level roles" is deliberately absent: the metadata row
 // right below already says "open to work".
-//
-// A run of periods is typed slowly and held on, so "..." reads as a beat
-// rather than as three fast keystrokes. See the typewriter in index.astro.
-export const PHRASES = [
-  "building a cybersecurity home lab",
-  "going down the rabbit hole",
-  "studying for security+ and ccna",
-  "tinkering with electronics",
-  "watching F1 with my girlfriend",
-  "burning the midnight oil",
-  "learning how to play hockey... ice is hard.",
+export type Phrase = {
+  text: string;
+  // A word inside `text` that becomes an accent-coloured link once it is
+  // fully typed. Trailing periods are what buy a reader time to click it:
+  // any run of two or more is typed slowly and held on. See index.astro.
+  link?: { word: string; href: string };
+};
+
+// PHRASES[0] is rendered by the server, before any script runs, so it must
+// be a phrase without a link.
+export const PHRASES: Phrase[] = [
+  { text: "building a cybersecurity home lab" },
+  {
+    text: "making my computer consciouss...",
+    link: { word: "consciouss", href: "https://www.conscioussai.com/" },
+  },
+  { text: "going down the rabbit hole" },
+  { text: "studying for security+ and ccna" },
+  { text: "tinkering with electronics" },
+  { text: "watching F1 with my girlfriend" },
+  { text: "burning the midnight oil" },
+  { text: "learning how to play hockey... ice is hard." },
 ];
