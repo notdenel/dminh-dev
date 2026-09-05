@@ -1,0 +1,52 @@
+---
+// Homepage only. Ships hidden and stays hidden unless the route hands back a
+// real track, so every failure — no credentials, a dead token, Spotify down,
+// JS off — looks the same to a visitor: the line simply is not there.
+---
+
+<p class="now-playing" data-now hidden>
+    <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+
+    <span>
+        <span data-now-label></span><a
+            data-now-track
+            class="now-playing-track"
+            target="_blank"
+            rel="noopener noreferrer"></a>
+    </span>
+</p>
+
+<script>
+    const row = document.querySelector<HTMLElement>("[data-now]");
+    const label = document.querySelector<HTMLElement>("[data-now-label]");
+    const track = document.querySelector<HTMLAnchorElement>("[data-now-track]");
+
+    if (row && label && track) {
+        fetch("/api/now-playing")
+            .then((response) => (response.ok ? response.json() : null))
+            .then((data) => {
+                if (!data || typeof data.title !== "string") return;
+
+                label.textContent = data.playing
+                    ? "now playing — "
+                    : "last played — ";
+
+                // textContent, never innerHTML: these strings are whatever
+                // Spotify returns, and a track name can contain anything.
+                track.textContent = data.artist
+                    ? `${data.title}, ${data.artist}`
+                    : data.title;
+
+                if (typeof data.url === "string" && data.url.startsWith("https://open.spotify.com/")) {
+                    track.href = data.url;
+                } else {
+                    track.removeAttribute("href");
+                }
+
+                row.hidden = false;
+            })
+            .catch(() => {
+                // Deliberately silent. The line stays hidden.
+            });
+    }
+</script>

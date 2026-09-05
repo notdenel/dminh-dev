@@ -8,6 +8,7 @@ import ProjectRow from "../components/ProjectRow.astro";
 import { getCollection } from "astro:content";
 import { formatDisplayDate, formatYearRail } from "../utils/formatDate";
 import { PHRASES } from "../utils/phrases";
+import NowPlaying from "../components/NowPlaying.astro";
 
 const recentBlogPosts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -49,6 +50,8 @@ const featuredProjects = (await getCollection("projects"))
         <span class="metadata-separator" aria-hidden="true">•</span>
         <span>open to work</span>
       </p>
+
+      <NowPlaying />
     </PageHeader>
 
     <section class="mt-16 space-y-6">
@@ -111,6 +114,7 @@ const featuredProjects = (await getCollection("projects"))
 
 <script>
   import { PHRASES } from "../utils/phrases";
+import NowPlaying from "../components/NowPlaying.astro";
 
   // ── his local time ──────────────────────────────────────────────────────
   // A static build bakes the build time, so this has to be client-side. It

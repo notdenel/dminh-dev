@@ -171,6 +171,55 @@ body {
     transform: translateY(1px);
 }
 
+/* NOW PLAYING (MOT-2)
+   A static equaliser, not an animated one: the loud-flair budget for this
+   page is already spent on the typed line, and the liveness here is the
+   data rather than the motion. */
+.now-playing {
+    display: flex;
+    align-items: center;
+    gap: 0.5625rem;
+    margin-top: 0.5rem;
+    color: var(--color-faint);
+    font-size: var(--text-meta);
+}
+
+.now-playing-track {
+    color: var(--color-soft);
+    transition: color var(--motion) var(--ease);
+}
+
+.now-playing-track[href]:hover {
+    color: var(--color-accent-hi);
+}
+
+.eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 1.5px;
+    height: 10px;
+    flex: none;
+}
+
+.eq i {
+    display: block;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--color-accent-hi);
+}
+
+.eq i:nth-child(1) {
+    height: 5px;
+}
+
+.eq i:nth-child(2) {
+    height: 10px;
+}
+
+.eq i:nth-child(3) {
+    height: 7px;
+}
+
 /* READING PROGRESS (PROG-H)
    A 1px accent hairline travelling an accent-tinted track. Fixed to the
    viewport, so it reaches the end of the page rather than stopping where
