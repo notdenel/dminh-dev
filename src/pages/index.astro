@@ -114,25 +114,32 @@ const featuredProjects = (await getCollection("projects"))
 
 <script>
   import { PHRASES } from "../utils/phrases";
-import NowPlaying from "../components/NowPlaying.astro";
 
   // ── his local time ──────────────────────────────────────────────────────
-  // A static build bakes the build time, so this has to be client-side. It
-  // renders once rather than ticking: a clock that updates in front of the
-  // reader would spend loud-flair budget the typed line already owns.
+  // A static build bakes the build time, so this has to be client-side, and
+  // it has to tick: a clock that is only right at page load is a timestamp
+  // wearing a clock's clothes.
   const clock = document.querySelectorAll("[data-clock]");
 
   if (clock.length) {
-    const time = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Los_Angeles",
-      hour: "numeric",
-      minute: "2-digit",
-    })
-      .format(new Date())
-      .toLowerCase();
+    const face = clock[clock.length - 1];
 
-    clock[clock.length - 1].textContent = time;
+    const render = () => {
+      face.textContent = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour: "numeric",
+        minute: "2-digit",
+      })
+        .format(new Date())
+        .toLowerCase();
+    };
+
+    render();
     clock.forEach((el) => ((el as HTMLElement).hidden = false));
+
+    // Well inside a minute, so the displayed minute is never stale for long,
+    // and cheap enough that the interval is not worth aligning to :00.
+    setInterval(render, 15_000);
   }
 
   // ── the typed line ──────────────────────────────────────────────────────
@@ -155,12 +162,23 @@ import NowPlaying from "../components/NowPlaying.astro";
       const TYPE = 45;
       const HOLD = 2700; // sitting on a finished phrase, reading it back
       const THINK = 1250; // sitting on "right now i'm", deciding what is next
+      const DOT = 300; // between the periods of an ellipsis
+      const ELLIPSIS = 1900; // the beat the ellipsis is there to buy
       // Windows' own key-repeat settings, read off this machine:
       // HKCU\Control Panel\Keyboard KeyboardDelay=1, KeyboardSpeed=31.
       const BACKSPACE = 500; // the delay before a held key starts repeating
-      const REPEAT = 33; // and then 30 characters a second
+      const REPEAT = 25; // then a repeat rate between Windows' and the old one
 
       const idle = (on: boolean) => caret.classList.toggle("is-idle", on);
+
+      // What to wait after having just written character `chars` of `full`.
+      const pause = (full: string, chars: number) => {
+        if (deleting) return chars === full.length - 1 ? BACKSPACE : REPEAT;
+        if (full[chars - 1] !== ".") return TYPE;
+        if (full[chars] === ".") return DOT; // more of the run still to come
+        if (full[chars - 2] === ".") return ELLIPSIS; // the run just closed
+        return TYPE;
+      };
 
       const tick = () => {
         const full = PHRASES[phrase];
@@ -182,18 +200,11 @@ import NowPlaying from "../components/NowPlaying.astro";
           return;
         }
 
-        idle(false);
-
         // One character goes, then a pause, then the key repeat catches up —
         // which is what holding backspace actually feels like.
-        setTimeout(
-          tick,
-          !deleting
-            ? TYPE
-            : chars === full.length - 1
-              ? BACKSPACE
-              : REPEAT,
-        );
+        const wait = pause(full, chars);
+        idle(wait === ELLIPSIS);
+        setTimeout(tick, wait);
       };
 
       caret.classList.add("is-typing", "is-idle");

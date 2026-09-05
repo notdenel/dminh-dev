@@ -110,6 +110,12 @@
     scrollbar-color: #34304a var(--color-page);
 }
 
+/* Cross-document view transitions. Native, no router and no script: a
+   browser without support simply navigates the way it always did. */
+@view-transition {
+    navigation: auto;
+}
+
 html {
     background: var(--color-page);
 }
@@ -243,7 +249,7 @@ body {
 }
 
 /* READING PROGRESS (PROG-H)
-   A 1px accent hairline travelling an accent-tinted track. Fixed to the
+   A 3px accent bar travelling an accent-tinted track. Fixed to the
    viewport, so it reaches the end of the page rather than stopping where
    the track runs out. */
 .reading-progress {
@@ -403,12 +409,6 @@ body {
     bottom: 0;
     left: 0.625rem;
     border-bottom: 1px solid var(--color-line);
-}
-
-/* The footer draws its own rule a little below this one. Two parallel lines
-   with dead space between them read as a gap rather than an ending. */
-.project-row:last-child::after {
-    content: none;
 }
 
 .project-row:hover {

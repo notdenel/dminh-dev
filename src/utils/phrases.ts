@@ -4,9 +4,15 @@
 //
 // "looking for entry-level roles" is deliberately absent: the metadata row
 // right below already says "open to work".
+//
+// A run of periods is typed slowly and held on, so "..." reads as a beat
+// rather than as three fast keystrokes. See the typewriter in index.astro.
 export const PHRASES = [
   "building a cybersecurity home lab",
-  "studying for network+ and ccna",
-  "making small projects for fun",
-  "learning how to play hockey",
+  "going down the rabbit hole",
+  "studying for security+ and ccna",
+  "tinkering with electronics",
+  "watching F1 with my girlfriend",
+  "burning the midnight oil",
+  "learning how to play hockey... ice is hard.",
 ];
