@@ -155,8 +155,10 @@ import NowPlaying from "../components/NowPlaying.astro";
       const TYPE = 45;
       const HOLD = 2700; // sitting on a finished phrase, reading it back
       const THINK = 1250; // sitting on "right now i'm", deciding what is next
-      const BACKSPACE = 320; // the beat before a held key starts repeating
-      const REPEAT = 18; // and then the rest run away at once
+      // Windows' own key-repeat settings, read off this machine:
+      // HKCU\Control Panel\Keyboard KeyboardDelay=1, KeyboardSpeed=31.
+      const BACKSPACE = 500; // the delay before a held key starts repeating
+      const REPEAT = 33; // and then 30 characters a second
 
       const idle = (on: boolean) => caret.classList.toggle("is-idle", on);
 
