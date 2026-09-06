@@ -9,4 +9,4 @@
     standards: html5, css3
     components: astro, tailwind css
     typefaces: jost, source sans 3, ibm plex mono
-    ide: vs code
+    ide: vscode
