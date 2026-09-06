@@ -177,7 +177,7 @@ body {
 .metadata-row {
     font-family: var(--font-chrome);
     font-size: var(--text-ui);
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .site-link {
@@ -387,7 +387,7 @@ body {
     color: var(--color-faint);
     font-family: var(--font-chrome);
     font-size: var(--text-ui);
-    font-weight: 400;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
 }
 
@@ -486,6 +486,7 @@ body {
 .project-row-rail {
     color: var(--color-faint);
     font-family: var(--font-chrome);
+    font-weight: 500;
     font-size: var(--text-micro);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.01em;
@@ -506,6 +507,7 @@ body {
 .project-row-designation {
     color: var(--color-faint);
     font-family: var(--font-chrome);
+    font-weight: 500;
     font-size: var(--text-micro);
     white-space: nowrap;
 }
