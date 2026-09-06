@@ -171,12 +171,12 @@ body {
     font-family: var(--font-chrome);
 }
 
-/* Facts, not prose. The data face is how this site already says
-   "machine-readable" — the project year rail and the tech line both use it —
-   so the row stops competing with the two prose lines above it. */
+/* Dates and reading time. These are read, not scanned like a coordinate, so
+   they take the chrome face rather than the data face — a full metadata line
+   set in mono under an article title is more texture than it can carry. */
 .metadata-row {
-    font-family: var(--font-data);
-    font-size: var(--text-micro);
+    font-family: var(--font-chrome);
+    font-size: var(--text-ui);
     font-weight: 400;
 }
 
@@ -215,19 +215,6 @@ body {
 
 .site-icon-link:active {
     transform: translateY(1px);
-}
-
-/* NOW PLAYING (MOT-2)
-   A static equaliser, not an animated one: the loud-flair budget for this
-   page is already spent on the typed line, and the liveness here is the
-   data rather than the motion. */
-.now-playing {
-    display: flex;
-    align-items: center;
-    gap: 0.5625rem;
-    color: var(--color-faint);
-    font-family: var(--font-data);
-    font-size: var(--text-micro);
 }
 
 .now-playing-track {
@@ -394,11 +381,11 @@ body {
 
 /* YEAR HEADINGS
    The listing groups by year so each row can drop the year from its own
-   date. Set in the data face at the rail's weight: it is a coordinate, not a
-   title, and it must not outrank the post titles underneath it. */
+   date. Set quiet and small: it is a coordinate, not a title, and it must
+   not outrank the post titles underneath it. */
 .year-heading {
     color: var(--color-faint);
-    font-family: var(--font-data);
+    font-family: var(--font-chrome);
     font-size: var(--text-ui);
     font-weight: 400;
     font-variant-numeric: tabular-nums;
@@ -498,7 +485,7 @@ body {
 
 .project-row-rail {
     color: var(--color-faint);
-    font-family: var(--font-data);
+    font-family: var(--font-chrome);
     font-size: var(--text-micro);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.01em;
@@ -518,7 +505,7 @@ body {
 
 .project-row-designation {
     color: var(--color-faint);
-    font-family: var(--font-data);
+    font-family: var(--font-chrome);
     font-size: var(--text-micro);
     white-space: nowrap;
 }

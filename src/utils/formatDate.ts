@@ -58,7 +58,7 @@ export const formatYearRail = (startDate?: string, endDate?: string) => {
   const startYear = startDate.slice(0, 4);
 
   if (!endDate) {
-    return `${startYear} —`;
+    return `${startYear}—`;
   }
 
   const endYear = endDate.slice(0, 4);
