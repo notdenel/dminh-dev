@@ -1,31 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { railRange, railProgress, stopPositions } from "./readingRail.ts";
+import { railProgress, railHasStops, stopPositions } from "./readingRail.ts";
 
-// The rail is measured against the ARTICLE's own extent, not against the
-// scroll range. Mapping headings onto the scroll range was the original bug:
-// on a short page a heading near the end can never reach the top of the
-// viewport, so every late heading clamped to 1 and the stops stacked. Real
-// numbers from /projects/simple-c-compiler — 511px of scroll, headings at
-// 429/711/1096 — put two of the three stops on top of each other.
+// The rail's fill and its stops must live in the SAME coordinate space, or
+// they contradict each other on screen. They are both scroll positions.
+//
+// An earlier version placed the stops by their share of the ARTICLE while the
+// fill tracked scroll. Measured on /projects/simple-c-compiler: clicking the
+// FIRST stop — drawn at the very top of the rail — filled the rail to 84%,
+// because reaching that heading costs 435 of the page's 517px of scroll.
 
-test("railRange starts at the first heading and ends with the article", () => {
-  assert.deepEqual(railRange([429, 711, 1096], 200, 1250), { start: 429, end: 1250 });
-});
-
-test("railRange falls back to the article top when there are no headings", () => {
-  assert.deepEqual(railRange([], 200, 1250), { start: 200, end: 1250 });
-});
-
-test("railRange never returns an empty or inverted range", () => {
-  assert.ok(railRange([900], 200, 900).end > railRange([900], 200, 900).start);
-  assert.ok(railRange([], 500, 100).end > railRange([], 500, 100).start);
-});
-
-// Progress is plain scroll position, as the horizontal bar always was: empty
-// at the top of the page and full at the bottom, whatever the article's shape.
-// Measuring what the reader had SEEN instead (the viewport bottom) opened the
-// rail 53-58% full on the short project pages, which does not read as progress.
 test("railProgress is 0 at the top of the page", () => {
   assert.equal(railProgress(0, 1400), 0);
 });
@@ -47,30 +31,67 @@ test("railProgress survives a page with nothing to scroll", () => {
   assert.equal(railProgress(0, 0), 0);
 });
 
-// Regression, the reason this model exists: every heading must land on a
-// distinct position even when the page barely scrolls.
-test("stopPositions spreads real headings that the scroll range would stack", () => {
-  const { start, end } = railRange([429, 711, 1096], 200, 1250);
-  const at = stopPositions([429, 711, 1096], start, end);
+// The whole point of the model: a stop sits where the fill will be once you
+// have clicked it. Clicking a heading scrolls it to the top of the viewport,
+// so its position is simply its document offset over the scroll range.
+test("a stop sits exactly where clicking it leaves the fill", () => {
+  const at = stopPositions([435, 1200, 2100], 2700);
 
-  assert.equal(at[0], 0);
-  assert.ok(at[1] > 0 && at[1] < 1, `middle stop landed at ${at[1]}`);
-  assert.ok(at[2] > at[1], "stops must stay in document order");
-  assert.equal(new Set(at).size, 3, "no two stops may share a position");
+  assert.deepEqual(
+    at.map((s) => s.at),
+    [435 / 2700, 1200 / 2700, 2100 / 2700],
+  );
 });
 
-test("stopPositions puts the first stop at the top of the rail", () => {
-  assert.equal(stopPositions([400, 900, 1400], 400, 1400)[0], 0);
+test("stopPositions keeps each stop's index so the component can pair them", () => {
+  assert.deepEqual(stopPositions([435, 1200], 2700).map((s) => s.index), [0, 1]);
 });
 
-test("stopPositions places the rest by their share of the article", () => {
-  assert.deepEqual(stopPositions([400, 900, 1400], 400, 1400), [0, 0.5, 1]);
+test("stopPositions clamps a heading inside the unreachable final viewport", () => {
+  assert.equal(stopPositions([9999], 2700)[0].at, 1);
 });
 
-test("stopPositions clamps anything outside the range", () => {
-  assert.deepEqual(stopPositions([100, 9999], 400, 1400), [0, 1]);
+test("stopPositions returns nothing when there is no scroll range", () => {
+  assert.deepEqual(stopPositions([435], 0), []);
 });
 
 test("stopPositions returns nothing for an article with no headings", () => {
-  assert.deepEqual(stopPositions([], 0, 1), []);
+  assert.deepEqual(stopPositions([], 2700), []);
+});
+
+// Two headings inside the final viewport resolve to the SAME scroll position:
+// the bottom of the page. Drawn as two dots they overlap and swallow each
+// other's clicks, which is the regression this guard exists to prevent.
+test("stopPositions drops a stop that shares its destination with the previous", () => {
+  const at = stopPositions([435, 2600, 2650], 2700, 0.05);
+
+  assert.deepEqual(at.map((s) => s.index), [0, 1]);
+});
+
+test("stopPositions keeps stops that clear the minimum gap", () => {
+  const at = stopPositions([0, 1350, 2700], 2700, 0.05);
+
+  assert.deepEqual(at.map((s) => s.index), [0, 1, 2]);
+});
+
+test("stopPositions measures the gap from the last KEPT stop, not the last seen", () => {
+  // Three near-identical stops must collapse to one, not ratchet forwards.
+  const at = stopPositions([100, 200, 300], 10000, 0.05);
+
+  assert.deepEqual(at.map((s) => s.index), [0]);
+});
+
+// Below one viewport of scroll, more than half the document sits in the final
+// screen — which cannot be scrolled to — so most stops would be fiction. Real
+// numbers from the project pages: 517, 603 and 801px of scroll at a 900px
+// viewport, where every heading after the first shared the same destination.
+test("railHasStops is false when the page scrolls less than one viewport", () => {
+  assert.equal(railHasStops(517, 900), false);
+  assert.equal(railHasStops(603, 900), false);
+  assert.equal(railHasStops(801, 900), false);
+});
+
+test("railHasStops is true once the page scrolls a full viewport", () => {
+  assert.equal(railHasStops(900, 900), true);
+  assert.equal(railHasStops(2700, 900), true);
 });

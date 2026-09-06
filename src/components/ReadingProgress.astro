@@ -4,9 +4,10 @@
 // it in; below that breakpoint the hairline stays, because a phone has no
 // gutter and no indicator at all would be a regression.
 //
-// The rail measures the sectioned body of the article, so its range starts at
-// the first heading. An article with no headings falls back to its whole
-// length and simply shows no stops.
+// Fill and stops are both scroll positions, so a stop sits exactly where the
+// fill lands once you have clicked it. A page too short for its stops to be
+// distinct shows the rail without them — see readingRail.ts for why that is a
+// limit of the scrollbar rather than of this component.
 ---
 
 <div class="reading-rail" data-rail hidden>
@@ -22,8 +23,8 @@
 
 <script>
     import {
-        railRange,
         railProgress,
+        railHasStops,
         stopPositions,
     } from "../utils/readingRail";
 
@@ -35,23 +36,32 @@
     const article = document.querySelector<HTMLElement>(".article-content");
 
     if (rail && railFill && stopsBox && bar && barFill && article) {
-        const headings = [
-            ...article.querySelectorAll<HTMLElement>("h2"),
-        ];
+        const headings = [...article.querySelectorAll<HTMLElement>("h2")];
 
-        // Read fresh on every paint rather than stored: an image or a late
+        // Read fresh on every measure rather than stored: an image or a late
         // font shifts every heading below it.
         const docTop = (el: Element) =>
             el.getBoundingClientRect().top + window.scrollY;
 
-        const stops = headings.map((heading) => {
+        // HeadingAnchors appends a "#" link inside every heading at load, and
+        // the order between these two scripts is not guaranteed. Read the
+        // heading without it rather than trusting who ran first — stripping a
+        // trailing "#" would be the wrong fix for a heading like "Learning C#".
+        const labelOf = (heading: HTMLElement) => {
+            const copy = heading.cloneNode(true) as HTMLElement;
+            copy.querySelector(".heading-anchor")?.remove();
+            return copy.textContent?.trim() ?? "";
+        };
+
+        const anchors = headings.map((heading) => {
+            const label = labelOf(heading);
             const el = document.createElement("a");
             el.className = "reading-rail-stop";
             el.href = `#${heading.id}`;
-            el.dataset.label = heading.textContent ?? "";
-            el.setAttribute("aria-label", `Jump to ${heading.textContent}`);
+            el.dataset.label = label;
+            el.setAttribute("aria-label", `Jump to ${label}`);
             stopsBox.appendChild(el);
-            return { el, heading };
+            return el;
         });
 
         // Layout and scroll are deliberately separate. Measuring the headings
@@ -60,7 +70,7 @@
         // drifting value moves the dots while the page moves. Positions are a
         // property of the layout, so they change only when the layout does.
         let max = 0;
-        let positions: number[] = [];
+        let shown: { el: HTMLElement; at: number }[] = [];
 
         const measure = () => {
             max = document.documentElement.scrollHeight - window.innerHeight;
@@ -72,17 +82,26 @@
             bar.hidden = idle;
             if (idle) return;
 
-            const offsets = headings.map(docTop);
-            const box = article.getBoundingClientRect();
-            const { start, end } = railRange(
-                offsets,
-                box.top + window.scrollY,
-                box.bottom + window.scrollY,
-            );
+            // Two dots may not overlap, so the smallest gap worth drawing is
+            // one dot across. Zero while the rail is display:none, which is
+            // harmless — nothing is on screen to collide.
+            const railHeight = rail.getBoundingClientRect().height;
+            const dotSize = anchors[0]?.getBoundingClientRect().height ?? 0;
+            const minGap = railHeight > 0 ? dotSize / railHeight : 0;
 
-            positions = stopPositions(offsets, start, end);
-            stops.forEach((stop, i) => {
-                stop.el.style.top = `${positions[i] * 100}%`;
+            const stops = railHasStops(max, window.innerHeight)
+                ? stopPositions(headings.map(docTop), max, minGap)
+                : [];
+
+            anchors.forEach((el) => {
+                el.hidden = true;
+            });
+
+            shown = stops.map(({ index, at }) => {
+                const el = anchors[index];
+                el.hidden = false;
+                el.style.top = `${at * 100}%`;
+                return { el, at };
             });
         };
 
@@ -99,11 +118,8 @@
             railFill.style.height = `${progress * 100}%`;
             barFill.style.transform = `scaleX(${progress})`;
 
-            stops.forEach((stop, i) => {
-                stop.el.classList.toggle(
-                    "is-read",
-                    progress >= positions[i] - 0.002,
-                );
+            shown.forEach((stop) => {
+                stop.el.classList.toggle("is-read", progress >= stop.at - 0.002);
             });
         };
 
