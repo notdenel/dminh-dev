@@ -391,6 +391,30 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
+/* PULL QUOTE
+   The question is stated plainly and the answer takes the accent, so the
+   second line lands rather than just continuing the first. */
+.pull-quote {
+    /* not `margin: 0` — that beat the mt-section utility on the element,
+       which has the same specificity and loses on source order */
+    margin-inline: 0;
+    margin-bottom: 0;
+    color: var(--color-soft);
+    font-family: var(--font-copy);
+    font-size: var(--text-title);
+    line-height: 1.4;
+    text-align: center;
+    text-wrap: balance;
+}
+
+.pull-quote p {
+    margin: 0;
+}
+
+.pull-quote p + p {
+    color: var(--color-accent-hi);
+}
+
 /* TAGS, UNBOXED
    The # carries the accent, the word stays quiet. min-height holds a ~44px
    tap target that draws nothing; the row's negative block margin hands the
