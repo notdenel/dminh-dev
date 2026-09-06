@@ -121,12 +121,6 @@
     scrollbar-color: #34304a var(--color-page);
 }
 
-/* Cross-document view transitions. Native, no router and no script: a
-   browser without support simply navigates the way it always did. */
-@view-transition {
-    navigation: auto;
-}
-
 html {
     background: var(--color-page);
 }
