@@ -14,19 +14,19 @@ import {
 process.env.TZ = "America/Los_Angeles";
 
 test("formatDisplayDate does not shift the day in negative UTC offsets", () => {
-  // Regression: `pubDate: 2026-07-11` once rendered as "jul 10, 2026" because a
+  // Regression: `pubDate: 2026-07-11` once rendered as "Jul 10, 2026" because a
   // date-only string is midnight UTC and Pacific time is behind UTC.
-  assert.equal(formatDisplayDate(new Date("2026-07-11")), "jul 11, 2026");
+  assert.equal(formatDisplayDate(new Date("2026-07-11")), "Jul 11, 2026");
 });
 
 test("formatDisplayDate uses the abbreviated month labels", () => {
-  assert.equal(formatDisplayDate(new Date("2026-09-01")), "sept 1, 2026");
-  assert.equal(formatDisplayDate(new Date("2026-01-31")), "jan 31, 2026");
+  assert.equal(formatDisplayDate(new Date("2026-09-01")), "Sept 1, 2026");
+  assert.equal(formatDisplayDate(new Date("2026-01-31")), "Jan 31, 2026");
 });
 
 test("formatMonthYear renders a month-year string", () => {
-  assert.equal(formatMonthYear("2025-06"), "jun 2025");
-  assert.equal(formatMonthYear("2026-03"), "mar 2026");
+  assert.equal(formatMonthYear("2025-06"), "Jun 2025");
+  assert.equal(formatMonthYear("2026-03"), "Mar 2026");
 });
 
 test("formatMonthYear returns its input unchanged when unparseable", () => {
@@ -35,11 +35,11 @@ test("formatMonthYear returns its input unchanged when unparseable", () => {
 });
 
 test("formatMonthYearRange uses 'present' when there is no end date", () => {
-  assert.equal(formatMonthYearRange("2025-06"), "jun 2025 — present");
+  assert.equal(formatMonthYearRange("2025-06"), "Jun 2025 — present");
 });
 
 test("formatMonthYearRange renders a closed range", () => {
-  assert.equal(formatMonthYearRange("2026-03", "2026-06"), "mar 2026 — jun 2026");
+  assert.equal(formatMonthYearRange("2026-03", "2026-06"), "Mar 2026 — Jun 2026");
 });
 
 test("formatMonthYearRange returns undefined without a start date", () => {
@@ -65,10 +65,10 @@ test("formatYearRail returns undefined without a start date", () => {
 });
 
 test("formatDayMonth drops the year for a post under a year heading", () => {
-  assert.equal(formatDayMonth(new Date("2026-07-11")), "jul 11");
-  assert.equal(formatDayMonth(new Date("2026-09-01")), "sept 1");
+  assert.equal(formatDayMonth(new Date("2026-07-11")), "Jul 11");
+  assert.equal(formatDayMonth(new Date("2026-09-01")), "Sept 1");
 });
 
 test("formatDayMonth does not shift the day in negative UTC offsets", () => {
-  assert.equal(formatDayMonth(new Date("2026-01-01")), "jan 1");
+  assert.equal(formatDayMonth(new Date("2026-01-01")), "Jan 1");
 });

@@ -1,18 +1,20 @@
-// CAP-2: chrome is lowercase. `sept` keeps four characters —
-// nothing stacks dates into a column, so the extra width costs nothing.
+// Month labels are capitalised even though the rest of the chrome is lowercase:
+// a date is a proper noun, and it reads as a date rather than as a label.
+// `Sept` keeps four characters — nothing stacks dates into a column, so the
+// extra width costs nothing.
 const months = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sept",
-  "oct",
-  "nov",
-  "dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sept",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 export const formatDisplayDate = (date: Date) => {
