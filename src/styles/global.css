@@ -256,6 +256,165 @@ body {
    A 3px accent bar travelling an accent-tinted track. Fixed to the
    viewport, so it reaches the end of the page rather than stopping where
    the track runs out. */
+/* READING RAIL
+   A vertical rail beside the article column with a stop per heading. Every
+   value below is a knob — these are the only lines to touch when retuning it.
+   The rail measures the sectioned body, so it starts at the first heading; an
+   article with no headings shows the rail alone. */
+.reading-rail {
+    --rail-width: 2px;
+    --rail-length: 50%;
+    /* 0.035 put the track only 8/255 above the page colour — uniform when
+       rendered, but it breaks into dashes under any rescaling. 0.06 is still
+       barely-there and roughly doubles the separation. */
+    --rail-track: rgba(255, 255, 255, 0.06);
+    /* #8b69ce is --color-accent-500; taken through the token so a palette
+       change carries, rather than stranding a literal here */
+    --rail-fill: var(--color-accent);
+    --rail-radius: 999px;
+    /* half the article column: max-w-2xl is 42rem */
+    --article-half: 21rem;
+
+    --stop-size: 12px;
+    --stop-ring: 3.5px;
+    --stop-idle: rgba(255, 255, 255, 0.22);
+    --stop-done: var(--color-accent-hi);
+    --stop-scale: 1.15;
+
+    position: fixed;
+    /* Centred by arithmetic rather than by transform. A transform on a fixed
+       element promotes it to its own compositor layer, which is where the
+       accent remnants came from; plain top/left keeps it on the normal paint
+       path. Percentages resolve against the viewport here, so `top` centres
+       vertically and `left` still lands on the middle of the gutter. */
+    top: calc(50% - var(--rail-length) / 2);
+    left: calc((50% - var(--article-half)) / 2 - var(--stop-size) / 2);
+    z-index: 40;
+    display: none;
+    height: var(--rail-length);
+    width: var(--stop-size);
+    justify-content: center;
+}
+
+/* Only where there is a gutter to put it in. Below this the top hairline
+   stays: a phone has no margin beside the column, and dropping the indicator
+   entirely would be a regression on the width most people read at. */
+@media (min-width: 64rem) {
+    .reading-rail:not([hidden]) {
+        display: flex;
+    }
+
+    .reading-progress {
+        display: none;
+    }
+}
+
+.reading-rail-track {
+    position: relative;
+    width: var(--rail-width);
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--rail-radius);
+    background: var(--rail-track);
+}
+
+/* Grown with height rather than transform: scaleY. Scaling a 2px-wide element
+   resamples its texture every frame and left accent-coloured specks behind
+   once the rail had been filled. Height repaints cleanly. */
+.reading-rail-track i {
+    display: block;
+    height: 0;
+    width: 100%;
+    border-radius: var(--rail-radius);
+    background: var(--rail-fill);
+}
+
+/* The stops sit outside the track so the track can clip its own fill. */
+.reading-rail-stops {
+    position: absolute;
+    inset: 0;
+}
+
+/* The anchor is only the hit area and never transforms beyond centring: the
+   dot and the label are separate pseudo-elements. Scaling the anchor itself
+   would scale the label with it — including its offset — which is what put the
+   label off the left edge of the screen. */
+.reading-rail-stop {
+    position: absolute;
+    left: 50%;
+    height: var(--stop-size);
+    width: var(--stop-size);
+    /* both axes: the dot is centred on its position, so it stays on the rail
+       at any --stop-size */
+    transform: translate(-50%, -50%);
+}
+
+.reading-rail-stop::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--stop-ring) solid var(--color-page);
+    border-radius: 50%;
+    background: var(--stop-idle);
+    transition:
+        background-color var(--motion) var(--ease),
+        transform var(--motion) var(--ease);
+}
+
+.reading-rail-stop.is-read::before {
+    background: var(--stop-done);
+    transform: scale(var(--stop-scale));
+}
+
+.reading-rail-stop:hover::before,
+.reading-rail-stop:focus-visible::before {
+    transform: scale(1.5);
+}
+
+.reading-rail-stop:focus-visible {
+    outline: none;
+}
+
+.reading-rail-stop:focus-visible::before {
+    box-shadow:
+        0 0 0 2px var(--color-page),
+        0 0 0 3.5px var(--color-accent-hi);
+}
+
+/* The heading name, opening into the margin rather than over the text. */
+.reading-rail-stop::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 0.75rem);
+    /* Never wider than the gap to the page edge, so it cannot be clipped.
+       vw, not %: a percentage here resolves against the 12px stop, not the
+       viewport, which collapsed the label to its own padding. */
+    max-width: min(11rem, calc(25vw - var(--article-half) / 2 - 1.5rem));
+    overflow: hidden;
+    /* No box: the label sits alone in the empty margin, so a border and a
+       filled background only add weight it does not need. */
+    color: var(--color-muted);
+    font-family: var(--font-chrome);
+    font-size: var(--text-micro);
+    line-height: 1.3;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-50%) translateX(0.25rem);
+    transition:
+        opacity var(--motion) var(--ease),
+        transform var(--motion) var(--ease);
+    pointer-events: none;
+}
+
+.reading-rail-stop:hover::after,
+.reading-rail-stop:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
 .reading-progress {
     position: fixed;
     inset: 0 0 auto;
