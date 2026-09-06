@@ -261,15 +261,12 @@ body {
     height: 7px;
 }
 
-/* READING PROGRESS (PROG-H)
-   A 3px accent bar travelling an accent-tinted track. Fixed to the
-   viewport, so it reaches the end of the page rather than stopping where
-   the track runs out. */
 /* READING RAIL
    A vertical rail beside the article column with a stop per heading. Every
    value below is a knob — these are the only lines to touch when retuning it.
-   The rail measures the sectioned body, so it starts at the first heading; an
-   article with no headings shows the rail alone. */
+   Fill and stops are both scroll positions, so a stop sits where the fill
+   lands once clicked; a page too short for distinct stops shows the rail
+   alone. See readingRail.ts. */
 .reading-rail {
     --rail-width: 2px;
     --rail-length: 50%;
@@ -424,6 +421,10 @@ body {
     transform: translateY(-50%) translateX(0);
 }
 
+/* READING PROGRESS (PROG-H)
+   The narrow-viewport fallback: a 3px accent bar travelling an accent-tinted
+   track. Fixed to the viewport, so it reaches the end of the page rather than
+   stopping where the track runs out. */
 .reading-progress {
     position: fixed;
     inset: 0 0 auto;

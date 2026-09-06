@@ -36,7 +36,11 @@
     const article = document.querySelector<HTMLElement>(".article-content");
 
     if (rail && railFill && stopsBox && bar && barFill && article) {
-        const headings = [...article.querySelectorAll<HTMLElement>("h2")];
+        // [id] because a heading without one yields href="#", which jumps to
+        // the top of the page while its dot sits partway down the rail.
+        const headings = [
+            ...article.querySelectorAll<HTMLElement>("h2[id]"),
+        ];
 
         // Read fresh on every measure rather than stored: an image or a late
         // font shifts every heading below it.
@@ -83,11 +87,15 @@
             if (idle) return;
 
             // Two dots may not overlap, so the smallest gap worth drawing is
-            // one dot across. Zero while the rail is display:none, which is
-            // harmless — nothing is on screen to collide.
+            // one dot across. Read from the token, not from an anchor: a pass
+            // that yields no stops leaves every anchor hidden and measuring
+            // 0px, which silently disabled this guard on the pass after.
             const railHeight = rail.getBoundingClientRect().height;
-            const dotSize = anchors[0]?.getBoundingClientRect().height ?? 0;
-            const minGap = railHeight > 0 ? dotSize / railHeight : 0;
+            const dotSize = parseFloat(
+                getComputedStyle(rail).getPropertyValue("--stop-size"),
+            );
+            const minGap =
+                railHeight > 0 && dotSize > 0 ? dotSize / railHeight : 0;
 
             const stops = railHasStops(max, window.innerHeight)
                 ? stopPositions(headings.map(docTop), max, minGap)
