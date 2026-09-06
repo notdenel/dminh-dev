@@ -49,7 +49,7 @@ test("formatMonthYearRange returns undefined without a start date", () => {
 // The project year rail is a timeline, not a date: it answers "when" at a
 // glance, so it collapses to the least text that still says it.
 test("formatYearRail marks an unfinished project with an open range", () => {
-  assert.equal(formatYearRail("2025-06"), "2025 —");
+  assert.equal(formatYearRail("2025-06"), "2025—");
 });
 
 test("formatYearRail collapses a same-year range to the single year", () => {
