@@ -400,9 +400,13 @@ body {
     margin-inline: 0;
     margin-bottom: 0;
     color: var(--color-soft);
-    font-family: var(--font-copy);
-    font-size: var(--text-title);
-    line-height: 1.4;
+    /* the display face, not the prose face: a quote set in the voice the
+       site uses for its own headings reads as the site saying it, where
+       Source Sans made it look like a stray paragraph */
+    font-family: var(--font-ui);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.5;
     text-align: center;
     text-wrap: balance;
 }
@@ -413,6 +417,21 @@ body {
 
 .pull-quote p + p {
     color: var(--color-accent-hi);
+}
+
+/* Curly marks, and quiet: they frame the line rather than join it. Set in
+   the element's own colour at reduced opacity so they sit behind the words
+   at both ends. */
+.pull-quote p:first-child::before {
+    content: "“";
+    margin-left: -0.55em;
+    color: var(--color-faint);
+}
+
+.pull-quote p:last-child::after {
+    content: "”";
+    margin-right: -0.55em;
+    color: var(--color-faint);
 }
 
 /* TAGS, UNBOXED
