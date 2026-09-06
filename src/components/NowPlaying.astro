@@ -72,6 +72,10 @@
                     ? `${data.artist} — ${data.title}`
                     : data.title;
 
+                // The line is clipped with an ellipsis when it is too long for
+                // the column, so keep the whole thing reachable on hover.
+                track.title = track.textContent ?? "";
+
                 if (typeof data.url === "string" && data.url.startsWith("https://open.spotify.com/")) {
                     track.href = data.url;
                 } else {

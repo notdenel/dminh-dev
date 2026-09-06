@@ -211,8 +211,14 @@ body {
     transform: translateY(1px);
 }
 
+/* One line, always. A long title wrapping to two lines was the only row in
+   the grid that broke its rhythm; the full text stays in the title attribute
+   and the link still goes to the track. */
 .now-playing-track {
+    overflow: hidden;
     color: var(--color-soft);
+    text-overflow: ellipsis;
+    white-space: nowrap;
     transition: color var(--motion) var(--ease);
 }
 
@@ -1057,6 +1063,9 @@ body {
    and needed explicit grid areas to look right at all. */
 .now-value {
     display: flex;
+    /* min-width:0 so the track can shrink and ellipsis instead of forcing the
+       row wider than its column */
+    min-width: 0;
     align-items: center;
     gap: 0.5rem;
 }
