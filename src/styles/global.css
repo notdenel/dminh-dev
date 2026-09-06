@@ -495,12 +495,30 @@ body {
     z-index: -1;
     inset: 0;
     background: var(--color-accent-surface);
+    /* Eased at both ends rather than a straight ramp. A linear fade meets
+       full opacity at a hard angle, and the eye reads that junction as a
+       crease — worse here because the fill is only 8% alpha, so the whole
+       ramp spans a handful of RGB levels and every step is visible. These
+       stops approximate a smoothstep, so the slope arrives at zero at both
+       the transparent end and the opaque one. */
     mask-image: linear-gradient(
         to right,
-        transparent,
-        #000 1.5rem,
-        #000 calc(100% - 1.5rem),
-        transparent
+        transparent 0%,
+        rgba(0, 0, 0, 0.03) 3%,
+        rgba(0, 0, 0, 0.12) 6%,
+        rgba(0, 0, 0, 0.3) 10%,
+        rgba(0, 0, 0, 0.55) 14%,
+        rgba(0, 0, 0, 0.78) 17%,
+        rgba(0, 0, 0, 0.93) 20%,
+        #000 24%,
+        #000 76%,
+        rgba(0, 0, 0, 0.93) 80%,
+        rgba(0, 0, 0, 0.78) 83%,
+        rgba(0, 0, 0, 0.55) 86%,
+        rgba(0, 0, 0, 0.3) 90%,
+        rgba(0, 0, 0, 0.12) 94%,
+        rgba(0, 0, 0, 0.03) 97%,
+        transparent 100%
     );
     opacity: 0;
     transition: opacity var(--motion) var(--ease);
