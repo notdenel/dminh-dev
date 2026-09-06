@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
 
+import { chooseTrack } from "../../utils/nowPlaying";
+
 // The only server-rendered route on the site. It exists so the Spotify
 // client secret and refresh token stay on the server: the browser only ever
 // sees a title, an artist and a public spotify.com link.
@@ -26,23 +28,6 @@ const json = (body: unknown) =>
 // body, which the component renders as nothing at all. A visitor never sees
 // this fail, and the reason never leaves the server.
 const nothing = () => json({});
-
-type Track = { title: string; artist: string; url?: string };
-
-const toTrack = (item: any): Track | undefined => {
-  const title = item?.name;
-
-  if (typeof title !== "string" || !title) return undefined;
-
-  return {
-    title,
-    artist: (item.artists ?? [])
-      .map((a: any) => a?.name)
-      .filter(Boolean)
-      .join(", "),
-    url: item.external_urls?.spotify,
-  };
-};
 
 // Vercel puts real environment variables on process.env at runtime, which is
 // what we want in production: rotating the secret there does not need a
@@ -94,27 +79,24 @@ export const GET: APIRoute = async () => {
 
     const headers = { authorization: `Bearer ${token}` };
 
-    // 204 here is the normal "nothing is playing" answer, not an error.
     const current = await fetch(CURRENT_URL, { headers });
+    const currentPayload =
+      current.status === 200 ? await current.json() : undefined;
 
-    if (current.status === 200) {
-      const payload = await current.json();
+    // History is only fetched when it might actually be needed.
+    const recent =
+      current.status === 200 && currentPayload?.item
+        ? undefined
+        : await fetch(RECENT_URL, { headers })
+            .then((r) => (r.ok ? r.json() : undefined))
+            .catch(() => undefined);
 
-      if (payload?.is_playing) {
-        const track = toTrack(payload.item);
-        if (track) return json({ playing: true, ...track });
-      }
-    }
+    const chosen = chooseTrack(
+      { status: current.status, payload: currentPayload },
+      recent,
+    );
 
-    const recent = await fetch(RECENT_URL, { headers });
-
-    if (recent.ok) {
-      const payload = await recent.json();
-      const track = toTrack(payload?.items?.[0]?.track);
-      if (track) return json({ playing: false, ...track });
-    }
-
-    return nothing();
+    return "title" in chosen ? json(chosen) : nothing();
   } catch {
     return nothing();
   }
