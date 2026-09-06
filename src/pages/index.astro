@@ -225,7 +225,7 @@ const featuredProjects = (await getCollection("projects"))
         if (chars >= end) {
           mark.href = p.link.href;
           mark.target = "_blank";
-          mark.rel = "noreferrer";
+          mark.rel = "noopener noreferrer";
         }
 
         typed.replaceChildren(shown.slice(0, start), mark, shown.slice(end));

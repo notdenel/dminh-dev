@@ -53,7 +53,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
     <title>{title}</title>
   </head>
 
-  <body class="min-h-screen antialiased">
+  <body class="min-h-screen antialiased" data-build-commit={buildCommit}>
     <div
       class="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-5 py-6 sm:px-6 sm:py-8"
     >
@@ -61,10 +61,13 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
     </div>
 
     <!-- for anyone who opens the console -->
-    <script is:inline define:vars={{ buildCommit }}>
+    <script>
+      // bundled rather than `is:inline` so the CSP can hash it; the commit
+      // rides in on a data attribute because `define:vars` forces it inline.
+      const commit = document.body.dataset.buildCommit || "an unknown commit";
       console.log(
         `%cdminh.dev%c
-built from ${buildCommit ?? "an unknown commit"} · github.com/notdenel/dminh-dev\n
+built from ${commit} · github.com/notdenel/dminh-dev\n
 if you're reading this, we'd probably get along :>\n\nsay hi: dminhsims@gmail.com`,
         "color:#aa8ee1;font:600 15px ui-sans-serif,system-ui,sans-serif",
         "color:#878899;font:13px ui-monospace,monospace",
