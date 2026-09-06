@@ -167,8 +167,7 @@ body {
    place Jost's geometry was costing legibility at 15px. */
 :is(header, footer),
 .site-link,
-.tag-link,
-.now-playing {
+.tag-link {
     font-family: var(--font-chrome);
 }
 
@@ -226,9 +225,9 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5625rem;
-    margin-top: 0.5rem;
     color: var(--color-faint);
-    font-size: var(--text-ui);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
 }
 
 .now-playing-track {
@@ -243,9 +242,14 @@ body {
 .eq {
     display: inline-flex;
     align-items: flex-end;
-    gap: 1.5px;
+    gap: 2px;
     height: 10px;
     flex: none;
+}
+
+.now-note {
+    flex: none;
+    color: var(--color-faint);
 }
 
 .eq i {
@@ -766,4 +770,56 @@ body {
 
 .article-content .callout>*:last-child {
     margin-bottom: 0;
+}
+
+/* FINGERPRINT PANEL (demo) */
+.fp {
+    margin: 0;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    background: var(--color-surface);
+    padding: 1.25rem 1.375rem 1.125rem;
+}
+
+.fp-caption {
+    margin-bottom: 0.875rem;
+    color: var(--color-accent);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.fp-rows {
+    display: grid;
+    gap: 0.4375rem;
+    margin: 0;
+}
+
+.fp-row {
+    display: grid;
+    grid-template-columns: 12.5rem 1fr;
+    gap: 1rem;
+}
+
+.fp-key {
+    color: var(--color-faint);
+    font-family: var(--font-chrome);
+    font-size: var(--text-ui);
+}
+
+.fp-value {
+    margin: 0;
+    color: var(--color-soft);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+}
+
+.fp-footer {
+    margin: 1rem 0 0;
+    border-top: 1px solid var(--color-line);
+    padding-top: 0.75rem;
+    color: var(--color-faint);
+    font-family: var(--font-chrome);
+    font-size: var(--text-micro);
 }

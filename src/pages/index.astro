@@ -9,6 +9,7 @@ import { getCollection } from "astro:content";
 import { formatDisplayDate, formatYearRail } from "../utils/formatDate";
 import { PHRASES } from "../utils/phrases";
 import NowPlaying from "../components/NowPlaying.astro";
+import Fingerprint from "../components/Fingerprint.astro";
 
 const recentBlogPosts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -35,9 +36,10 @@ const featuredProjects = (await getCollection("projects"))
           aria-hidden="true"></span>
       </p>
 
-      <p
-        class="metadata-row flex flex-wrap items-center gap-x-3 gap-y-1 text-ui font-semibold tabular-nums text-muted"
-      >
+      <div class="space-y-2">
+        <p
+          class="metadata-row flex flex-wrap items-center gap-x-3 gap-y-1 tabular-nums text-muted"
+        >
         <span>san jose, ca</span>
 
         {/* Both start hidden: without JS the row reads "san jose, ca • open
@@ -48,10 +50,12 @@ const featuredProjects = (await getCollection("projects"))
         <span data-clock hidden></span>
 
         <span class="metadata-separator" aria-hidden="true">•</span>
-        <span>open to work</span>
-      </p>
+          <span>open to work</span>
+        </p>
 
-      <NowPlaying />
+        <NowPlaying />
+      </div>
+
     </PageHeader>
 
     <section class="mt-section space-y-6">
@@ -107,6 +111,10 @@ const featuredProjects = (await getCollection("projects"))
         }
       </div>
     </section>
+
+    <div class="mt-section">
+      <Fingerprint voice="deadpan" />
+    </div>
   </main>
 
   <Footer />
