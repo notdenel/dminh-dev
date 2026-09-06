@@ -17,7 +17,7 @@ export type Phrase = {
 export const PHRASES: Phrase[] = [
   { text: "building a cybersecurity home lab" },
   {
-    text: "making my computer consciouss...",
+    text: "making my pc consciouss...",
     link: { word: "consciouss", href: "https://www.conscioussai.com/" },
   },
   { text: "going down the rabbit hole" },

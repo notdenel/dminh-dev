@@ -9,7 +9,6 @@ import { getCollection } from "astro:content";
 import { formatDisplayDate, formatYearRail } from "../utils/formatDate";
 import { PHRASES } from "../utils/phrases";
 import NowPlaying from "../components/NowPlaying.astro";
-import Fingerprint from "../components/Fingerprint.astro";
 
 const recentBlogPosts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -30,44 +29,38 @@ const featuredProjects = (await getCollection("projects"))
       title="hi, i'm daniel!"
       lede="a recent computer science & engineering graduate, navigating cybersecurity, systems, and software. i enjoy understanding why things work, and why they don't."
     >
-      {/* All three lines answer "what is true right now", so they sit tight
-          together and take their distance from the lede, which is the
-          biography. Spacing them evenly left the typed line orphaned between
-          two blocks it did not belong to. */}
-      <div class="mt-2 space-y-3">
-        <p class="typed-line">
-          right now i'm <span class="typed-text" data-typed
-            >{PHRASES[0].text}</span
-          ><span class="caret" aria-hidden="true"></span>
-        </p>
-
-        <div class="space-y-2">
-          <p
-            class="metadata-row flex flex-wrap items-center gap-x-3 gap-y-1 tabular-nums text-muted"
-          >
-            <span>san jose, ca</span>
-
-            {/* Both start hidden: without JS the row reads "san jose, ca •
-                open to work" with no dangling separator. */}
-            <span
-              class="metadata-separator"
-              data-clock
-              aria-hidden="true"
-              hidden
-            >
-              •
-            </span>
-            <span data-clock hidden></span>
-
-            <span class="metadata-separator" aria-hidden="true">•</span>
-            <span>open to work</span>
-          </p>
-
-          <NowPlaying />
-        </div>
-      </div>
-
     </PageHeader>
+
+    <section class="mt-section space-y-6">
+      <h2 class="section-label">right now</h2>
+
+      <dl class="now-grid">
+        <div>
+          <dt>working on</dt>
+          <dd class="is-live">
+            <span class="typed-text" data-typed>{PHRASES[0].text}</span><span
+              class="caret"
+              aria-hidden="true"></span>
+          </dd>
+        </div>
+
+        <div>
+          <dt>based in</dt>
+          <dd class="metadata-row">
+            san jose, ca<span data-clock hidden> — </span><span
+              data-clock
+              hidden></span>
+          </dd>
+        </div>
+
+        <div>
+          <dt>status</dt>
+          <dd>open to work</dd>
+        </div>
+
+        <NowPlaying />
+      </dl>
+    </section>
 
     <section class="mt-section space-y-6">
       <div class="flex items-baseline justify-between gap-4">
@@ -122,10 +115,6 @@ const featuredProjects = (await getCollection("projects"))
         }
       </div>
     </section>
-
-    <div class="mt-section">
-      <Fingerprint voice="deadpan" />
-    </div>
   </main>
 
   <Footer />

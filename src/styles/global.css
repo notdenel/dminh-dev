@@ -772,42 +772,31 @@ body {
     margin-bottom: 0;
 }
 
-/* FINGERPRINT PANEL (demo) */
-.fp {
-    margin: 0;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-panel);
-    background: var(--color-surface);
-    padding: 1.25rem 1.375rem 1.125rem;
-}
-
-.fp-caption {
-    margin-bottom: 0.875rem;
-    color: var(--color-accent);
-    font-size: var(--text-ui);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-}
-
-.fp-rows {
+/* THE "RIGHT NOW" GRID
+   Four facts in one key column. The registers stopped fighting once these
+   stopped being separate lines and became rows of one table. */
+.now-grid {
     display: grid;
     gap: 0.4375rem;
     margin: 0;
 }
 
-.fp-row {
+.now-grid>div,
+.now-row {
     display: grid;
-    grid-template-columns: 12.5rem 1fr;
+    grid-template-columns: 7.5rem 1fr;
     gap: 1rem;
+    align-items: baseline;
 }
 
-.fp-key {
+.now-grid dt,
+.now-row [data-now-label] {
     color: var(--color-faint);
     font-family: var(--font-chrome);
     font-size: var(--text-ui);
 }
 
-.fp-value {
+.now-grid dd {
     margin: 0;
     color: var(--color-soft);
     font-family: var(--font-data);
@@ -815,11 +804,33 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
-.fp-footer {
-    margin: 1rem 0 0;
-    border-top: 1px solid var(--color-line);
-    padding-top: 0.75rem;
-    color: var(--color-faint);
-    font-family: var(--font-chrome);
+/* The typed row is the one that moves, so it carries the emphasis. It stays
+   in the data face like every other value — a second typeface in a four-row
+   table is what made the block feel assembled rather than designed — and
+   takes its weight from size and ink instead. */
+.now-grid dd.is-live {
+    color: var(--color-ink);
+    font-size: var(--text-ui);
+}
+
+/* The now-playing row is a component, so its children arrive as icon, icon,
+   label, anchor. Auto-flow put an icon in the key column and pushed the track
+   onto its own line, so the columns are placed explicitly. */
+.now-row [data-now-label] {
+    grid-area: 1 / 1;
+}
+
+.now-row .eq,
+.now-row .now-note {
+    grid-area: 1 / 2;
+    justify-self: start;
+    align-self: center;
+}
+
+.now-row .now-playing-track {
+    grid-area: 1 / 2;
+    padding-left: 1.25rem;
+    color: var(--color-soft);
+    font-family: var(--font-data);
     font-size: var(--text-micro);
 }

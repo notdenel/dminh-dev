@@ -4,7 +4,7 @@
 // JS off — looks the same to a visitor: the line simply is not there.
 ---
 
-<p class="now-playing" data-now hidden>
+<div class="now-row" data-now hidden>
     {/* Bars while something is playing, a quiet note when it is only the
         last thing played. The icon carries the state, so the label does not
         have to work as hard. */}
@@ -27,14 +27,12 @@
         </svg>
     </span>
 
-    <span>
-        <span data-now-label></span><a
-            data-now-track
-            class="now-playing-track"
-            target="_blank"
-            rel="noopener noreferrer"></a>
-    </span>
-</p>
+    <span data-now-label></span><a
+        data-now-track
+        class="now-playing-track"
+        target="_blank"
+        rel="noopener noreferrer"></a>
+</div>
 
 <script>
     const row = document.querySelector<HTMLElement>("[data-now]");
@@ -44,14 +42,17 @@
     const track = document.querySelector<HTMLAnchorElement>("[data-now-track]");
 
     if (row && label && track) {
-        fetch("/api/now-playing")
+        const read = () =>
+            fetch("/api/now-playing")
             .then((response) => (response.ok ? response.json() : null))
             .then((data) => {
+                // A failed poll keeps whatever is already on screen rather
+                // than blanking the line: the last track is still true.
                 if (!data || typeof data.title !== "string") return;
 
                 label.textContent = data.playing
-                    ? "now playing — "
-                    : "last played — ";
+                    ? "now playing"
+                    : "last played";
 
                 // Both ship hidden, so a failure never leaves a stray icon
                 // sitting next to nothing.
@@ -61,7 +62,7 @@
                 // textContent, never innerHTML: these strings are whatever
                 // Spotify returns, and a track name can contain anything.
                 track.textContent = data.artist
-                    ? `${data.title}, ${data.artist}`
+                    ? `${data.artist} — ${data.title}`
                     : data.title;
 
                 if (typeof data.url === "string" && data.url.startsWith("https://open.spotify.com/")) {
@@ -75,5 +76,19 @@
             .catch(() => {
                 // Deliberately silent. The line stays hidden.
             });
+
+        read();
+
+        // The route caches for 30s, so polling faster than that only re-reads
+        // the same response out of the browser cache. A hidden tab is not
+        // worth a request at all, and coming back to one should not wait up
+        // to 30s to catch up.
+        setInterval(() => {
+            if (!document.hidden) read();
+        }, 30_000);
+
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) read();
+        });
     }
 </script>
