@@ -73,7 +73,10 @@
        particular read small at 100%, and worse the moment a browser is at
        110 or 125%. */
     --text-display: clamp(2.375rem, 1.55rem + 3.6vw, 3.25rem);
-    --text-display--line-height: 1.14;
+    /* 1.14 left only 6px of ink between the two lines of a wrapped title on a
+       52px face — the descenders nearly touched the caps below. 1.25 doubles
+       that to 12px and still reads as display leading. */
+    --text-display--line-height: 1.25;
     --text-title: 1.625rem;
     --text-title--line-height: 1.3;
     --text-heading: 1.3rem;
