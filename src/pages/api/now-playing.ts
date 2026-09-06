@@ -12,10 +12,13 @@ const CURRENT_URL = "https://api.spotify.com/v1/me/player/currently-playing";
 const RECENT_URL =
   "https://api.spotify.com/v1/me/player/recently-played?limit=1";
 
-// Long enough that a reload does not hammer Spotify, short enough that the
-// track is still roughly true. stale-while-revalidate means a visitor never
-// waits on the refresh.
-const CACHE = "public, max-age=30, s-maxage=30, stale-while-revalidate=120";
+// max-age=0 so the browser never answers from its own cache — it was serving
+// a 30s-old body to a poll that had just been told the track changed.
+// stale-while-revalidate is gone for the same reason: it let the edge answer
+// with the previous track and refresh behind it, which is exactly the "it
+// updates one poll late" symptom. s-maxage still shields Spotify from every
+// visitor, just over a window short enough that a poll lands on fresh data.
+const CACHE = "public, max-age=0, s-maxage=10";
 
 const json = (body: unknown) =>
   new Response(JSON.stringify(body), {

@@ -5,6 +5,9 @@
 ---
 
 <div class="now-row" data-now hidden>
+    <dt data-now-label></dt>
+
+    <dd class="now-value">
     {/* Bars while something is playing, a quiet note when it is only the
         last thing played. The icon carries the state, so the label does not
         have to work as hard. */}
@@ -27,11 +30,12 @@
         </svg>
     </span>
 
-    <span data-now-label></span><a
-        data-now-track
-        class="now-playing-track"
-        target="_blank"
-        rel="noopener noreferrer"></a>
+        <a
+            data-now-track
+            class="now-playing-track"
+            target="_blank"
+            rel="noopener noreferrer"></a>
+    </dd>
 </div>
 
 <script>
@@ -43,7 +47,10 @@
 
     if (row && label && track) {
         const read = () =>
-            fetch("/api/now-playing")
+            // no-store, not just a short max-age: a reload otherwise renders
+            // straight from the browser cache and shows the previous track
+            // before any request goes out at all.
+            fetch("/api/now-playing", { cache: "no-store" })
             .then((response) => (response.ok ? response.json() : null))
             .then((data) => {
                 // A failed poll keeps whatever is already on screen rather

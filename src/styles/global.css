@@ -339,15 +339,18 @@ body {
 /* A word inside a phrase that the typewriter turns into a link once it has
    finished typing it. Before that the anchor has no href, so it is inert and
    unfocusable on its own — no styling needed to say so. */
+/* Quiet at rest, accent on hover. No underline: in an article an underline
+   is the only thing separating a link from identical prose around it, but
+   here the colour already does that work and the rule just adds noise. */
 .typed-mark {
-    color: var(--color-accent-hi);
+    color: var(--color-accent);
     text-decoration: none;
+    transition: color var(--motion) var(--ease);
 }
 
 .typed-mark[href]:hover,
 .typed-mark[href]:focus-visible {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    color: var(--color-accent-hi);
 }
 
 /* Hidden until the typewriter is actually running: with JS off or reduced
@@ -804,33 +807,17 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
-/* The typed row is the one that moves, so it carries the emphasis. It stays
-   in the data face like every other value — a second typeface in a four-row
-   table is what made the block feel assembled rather than designed — and
-   takes its weight from size and ink instead. */
-.now-grid dd.is-live {
-    color: var(--color-ink);
-    font-size: var(--text-ui);
-}
+/* The typed row is sized and coloured exactly like the other three. The
+   caret is already the thing that says "this one is live" — making it
+   brighter and larger as well was emphasis left over from when this was a
+   sentence instead of a row, and it broke the column it now belongs to. */
 
-/* The now-playing row is a component, so its children arrive as icon, icon,
-   label, anchor. Auto-flow put an icon in the key column and pushed the track
-   onto its own line, so the columns are placed explicitly. */
-.now-row [data-now-label] {
-    grid-area: 1 / 1;
-}
-
-.now-row .eq,
-.now-row .now-note {
-    grid-area: 1 / 2;
-    justify-self: start;
-    align-self: center;
-}
-
-.now-row .now-playing-track {
-    grid-area: 1 / 2;
-    padding-left: 1.25rem;
-    color: var(--color-soft);
-    font-family: var(--font-data);
-    font-size: var(--text-micro);
+/* The now-playing row is a dt/dd pair like the others, so it inherits the
+   column and the value styling above; only the icon needs placing beside the
+   track. It was a div of loose spans before, which is not valid inside a dl
+   and needed explicit grid areas to look right at all. */
+.now-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
