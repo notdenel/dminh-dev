@@ -1,0 +1,44 @@
+---
+// Article pages only. PROG-H: a 1px accent hairline on an accent-tinted
+// track, fixed to the top of the viewport — not sticky inside a scroll
+// container, which is what made the lab's vertical demo stop short.
+---
+
+<div class="reading-progress" aria-hidden="true" hidden>
+    <i data-progress></i>
+</div>
+
+<script>
+    const bar = document.querySelector<HTMLElement>(".reading-progress");
+    const fill = document.querySelector<HTMLElement>("[data-progress]");
+
+    if (bar && fill) {
+        let queued = false;
+
+        const update = () => {
+            queued = false;
+
+            const max =
+                document.documentElement.scrollHeight - window.innerHeight;
+
+            // A page with nothing to scroll would otherwise show a full-width
+            // line that never moves, which is noise rather than information.
+            bar.hidden = max <= 0;
+
+            if (max <= 0) return;
+
+            const progress = Math.min(1, Math.max(0, window.scrollY / max));
+            fill.style.transform = `scaleX(${progress})`;
+        };
+
+        const queue = () => {
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(update);
+        };
+
+        addEventListener("scroll", queue, { passive: true });
+        addEventListener("resize", queue, { passive: true });
+        update();
+    }
+</script>

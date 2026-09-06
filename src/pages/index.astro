@@ -4,9 +4,11 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import PageHeader from "../components/PageHeader.astro";
 import BlogPostPreview from "../components/BlogPostPreview.astro";
-import ProjectCard from "../components/ProjectCard.astro";
+import ProjectRow from "../components/ProjectRow.astro";
 import { getCollection } from "astro:content";
-import { formatDisplayDate } from "../utils/formatDate";
+import { formatDisplayDate, formatYearRail } from "../utils/formatDate";
+import { PHRASES } from "../utils/phrases";
+import NowPlaying from "../components/NowPlaying.astro";
 
 const recentBlogPosts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
@@ -25,40 +27,48 @@ const featuredProjects = (await getCollection("projects"))
   <main class="flex-1">
     <PageHeader
       title="hi, i'm daniel!"
-      lede="i recently graduated with a degree in computer science & engineering, and am currently navigating the world of cybersecurity, systems, and software. i enjoy understanding why things work, bend, or break."
+      lede="a recent computer science & engineering graduate who's navigating the world of cybersecurity. i enjoy understanding why things work, and why they don't."
     >
-      <p
-        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-muted"
-      >
-        <span>san jose, ca</span>
-        <span class="metadata-separator" aria-hidden="true">•</span>
-        <span>open to work</span>
-      </p>
     </PageHeader>
 
-    <section class="mt-16 space-y-4">
-      <h2 class="text-sm font-semibold lowercase tracking-wide text-muted">
-        currently
-      </h2>
+    <section class="mt-section space-y-6">
+      <h2 class="section-label">currently</h2>
 
-      <ul class="font-copy space-y-3 text-lg text-soft">
-        <li>building a cybersecurity home lab</li>
-        <li>studying for network+ and ccna</li>
-        <li>making small projects for fun</li>
-        <li>learning how to play hockey</li>
-        <li>
-          looking for entry-level cybersecurity and software engineering roles
-        </li>
-      </ul>
+      <dl class="now-grid">
+        <div>
+          <dt>i'm</dt>
+          <dd>
+            <span class="typed-text" data-typed>{PHRASES[0].text}</span><span
+              class="caret"
+              aria-hidden="true"></span>
+          </dd>
+        </div>
+
+        <div>
+          <dt>based in</dt>
+          <dd>
+            san jose, ca<span data-clock hidden> — </span><span
+              data-clock
+              hidden></span>
+          </dd>
+        </div>
+
+        <div>
+          <dt>status</dt>
+          <dd>open to work</dd>
+        </div>
+
+        <NowPlaying />
+      </dl>
     </section>
 
-    <section class="mt-16 space-y-6">
+    <section class="mt-section space-y-6">
       <div class="flex items-baseline justify-between gap-4">
-        <h2 class="text-sm font-semibold lowercase tracking-wide text-muted">
+        <h2 class="section-label">
           blog
         </h2>
 
-        <a href="/blog" class="site-link text-sm font-semibold"> view all → </a>
+        <a href="/blog" class="site-link text-ui font-semibold"> view all → </a>
       </div>
 
       <div class="space-y-10">
@@ -76,32 +86,180 @@ const featuredProjects = (await getCollection("projects"))
       </div>
     </section>
 
-    <section class="mt-16 space-y-6">
+    <section class="mt-section space-y-6">
       <div class="flex items-baseline justify-between gap-4">
-        <h2 class="text-sm font-semibold lowercase tracking-wide text-muted">
+        <h2 class="section-label">
           projects
         </h2>
 
-        <a href="/projects" class="site-link text-sm font-semibold">
+        <a href="/projects" class="site-link text-ui font-semibold">
           view all →
         </a>
       </div>
 
-      <div class="space-y-4">
+      <div class="project-list">
         {
           featuredProjects.map((project) => (
-            <ProjectCard
+            <ProjectRow
               title={project.data.title}
               description={project.data.description}
               technologies={project.data.technologies}
-              status={project.data.status}
+              designation={project.data.type}
+              yearRail={formatYearRail(
+                project.data.startDate,
+                project.data.endDate,
+              )}
               href={`/projects/${project.id}`}
             />
           ))
         }
       </div>
     </section>
+
+    {/* Placeholder for the slot above the footer. Centre-aligned on a page
+        that is otherwise entirely left-aligned, which is the point: it reads
+        as a pause rather than another section. */}
+    <blockquote class="pull-quote mt-section">
+      <p>what's happening?</p>
+      <p>he's flying.</p>
+    </blockquote>
   </main>
 
   <Footer />
 </BaseLayout>
+
+<script>
+  import { PHRASES, type Phrase } from "../utils/phrases";
+
+  // ── his local time ──────────────────────────────────────────────────────
+  // A static build bakes the build time, so this has to be client-side. It
+  // wakes on the minute boundary rather than on an interval, so the digits
+  // change at the moment they actually change and never sit stale.
+  const clock = document.querySelectorAll("[data-clock]");
+
+  if (clock.length) {
+    const face = clock[clock.length - 1];
+
+    const showTime = () => {
+      face.textContent = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour: "numeric",
+        minute: "2-digit",
+      })
+        .format(new Date())
+        .toLowerCase();
+    };
+
+    const nextMinute = () => {
+      showTime();
+      setTimeout(nextMinute, 60_000 - (Date.now() % 60_000) + 200);
+    };
+
+    nextMinute();
+    clock.forEach((el) => ((el as HTMLElement).hidden = false));
+
+    // A background tab has its timers throttled, so the wake-up above can be
+    // late by minutes. Re-read on the way back rather than trust it.
+    document.addEventListener("visibilitychange", showTime);
+  }
+
+  // ── the typed line ──────────────────────────────────────────────────────
+  const typed = document.querySelector("[data-typed]");
+  const caret = typed?.nextElementSibling;
+
+  if (typed && caret) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Every phrase at once, no caret. A reduced-motion reader should lose
+      // the animation, not the content it was carrying.
+      typed.textContent = PHRASES.map((p) => p.text).join(" · ");
+    } else {
+      // The markup already shows PHRASES[0], so the loop opens on the pause
+      // after typing it rather than clearing the line and reflowing.
+      let phrase = 0;
+      let chars = PHRASES[0].text.length;
+      let deleting = true;
+
+      // Timings are about impersonating a person, not about speed.
+      const TYPE = 45;
+      const HOLD = 2700; // sitting on a finished phrase, reading it back
+      const THINK = 1250; // sitting on "right now i'm", deciding what is next
+      const DOT = 300; // before each period of an ellipsis
+      const ELLIPSIS = 1900; // the beat the ellipsis is there to buy
+      // Windows' own key-repeat settings, read off this machine:
+      // HKCU\Control Panel\Keyboard KeyboardDelay=1, KeyboardSpeed=31.
+      const BACKSPACE = 500; // the delay before a held key starts repeating
+      const REPEAT = 25; // then a repeat rate between Windows' and the old one
+
+      const idle = (on: boolean) => caret.classList.toggle("is-idle", on);
+
+      // A general rule, not a special case for one phrase: any run of two or
+      // more periods anywhere in any phrase is typed slowly and held on. A
+      // lone period ending a sentence is not a run and is typed normally.
+      const inRun = (s: string, i: number) =>
+        s[i] === "." && (s[i + 1] === "." || s[i - 1] === ".");
+
+      // What to wait after having just written character `chars` of `text`.
+      const pause = (text: string, chars: number) => {
+        if (deleting) return chars === text.length - 1 ? BACKSPACE : REPEAT;
+        if (inRun(text, chars)) return DOT; // a period of a run comes next
+        if (inRun(text, chars - 1)) return ELLIPSIS; // the run just closed
+        return TYPE;
+      };
+
+      // The linked word only becomes a real link once it is whole — a
+      // half-typed href is not something to hand a reader.
+      const paint = (p: Phrase, chars: number) => {
+        const shown = p.text.slice(0, chars);
+        const start = p.link ? p.text.indexOf(p.link.word) : -1;
+
+        if (!p.link || start < 0 || chars <= start) {
+          typed.textContent = shown;
+          return;
+        }
+
+        const end = start + p.link.word.length;
+        const mark = document.createElement("a");
+        mark.className = "typed-mark";
+        mark.textContent = shown.slice(start, end);
+
+        if (chars >= end) {
+          mark.href = p.link.href;
+          mark.target = "_blank";
+          mark.rel = "noreferrer";
+        }
+
+        typed.replaceChildren(shown.slice(0, start), mark, shown.slice(end));
+      };
+
+      const tick = () => {
+        const p = PHRASES[phrase];
+        chars += deleting ? -1 : 1;
+        paint(p, chars);
+
+        if (!deleting && chars === p.text.length) {
+          idle(true);
+          deleting = true;
+          setTimeout(tick, HOLD);
+          return;
+        }
+
+        if (deleting && chars === 0) {
+          idle(true);
+          deleting = false;
+          phrase = (phrase + 1) % PHRASES.length;
+          setTimeout(tick, THINK);
+          return;
+        }
+
+        // One character goes, then a pause, then the key repeat catches up —
+        // which is what holding backspace actually feels like.
+        const wait = pause(p.text, chars);
+        idle(wait === ELLIPSIS);
+        setTimeout(tick, wait);
+      };
+
+      caret.classList.add("is-typing", "is-idle");
+      setTimeout(tick, 1900);
+    }
+  }
+</script>

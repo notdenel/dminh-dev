@@ -1,13 +1,13 @@
 ---
 title: "Multi-Agent Robot Formation Control"
-description: "A senior capstone project involving decentralized robot formation control, MATLAB/Simulink simulation, ROS 2 integration, SLAM/AMCL localization, odometry, IMU data, and EKF-based pose estimation."
+description: "A senior capstone on decentralized robot formation control, simulated in Simulink and run through ROS 2."
 technologies:
   - ROS 2
   - MATLAB/Simulink
   - SLAM/AMCL
   - Raspberry Pi
-status: "Completed"
-type: "Coursework"
+status: "completed"
+type: "capstone"
 featured: true
 order: 3
 startDate: 2025-09

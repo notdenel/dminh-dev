@@ -1,0 +1,106 @@
+import type { APIRoute } from "astro";
+
+import { chooseTrack } from "../../utils/nowPlaying";
+
+// The only server-rendered route on the site. It exists so the Spotify
+// client secret and refresh token stay on the server: the browser only ever
+// sees a title, an artist and a public spotify.com link.
+export const prerender = false;
+
+const TOKEN_URL = "https://accounts.spotify.com/api/token";
+const CURRENT_URL = "https://api.spotify.com/v1/me/player/currently-playing";
+const RECENT_URL =
+  "https://api.spotify.com/v1/me/player/recently-played?limit=1";
+
+// max-age=0 so the browser never answers from its own cache — it was serving
+// a 30s-old body to a poll that had just been told the track changed.
+// stale-while-revalidate is gone for the same reason: it let the edge answer
+// with the previous track and refresh behind it, which is exactly the "it
+// updates one poll late" symptom. s-maxage still shields Spotify from every
+// visitor, just over a window short enough that a poll lands on fresh data.
+const CACHE = "public, max-age=0, s-maxage=10";
+
+const json = (body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "content-type": "application/json", "cache-control": CACHE },
+  });
+
+// Every failure lands here. Missing credentials, a rejected refresh token, a
+// Spotify outage, a malformed payload — all of them return the same empty
+// body, which the component renders as nothing at all. A visitor never sees
+// this fail, and the reason never leaves the server.
+const nothing = () => json({});
+
+// Vercel puts real environment variables on process.env at runtime, which is
+// what we want in production: rotating the secret there does not need a
+// rebuild. A local .env does not reach process.env under `astro dev`, so it
+// is read through import.meta.env instead — but only behind import.meta.env
+// .DEV, which is replaced by the literal `false` in a production build so the
+// whole block is dead code and no secret is ever inlined into the bundle.
+const dev = import.meta.env.DEV
+  ? {
+      id: import.meta.env.SPOTIFY_CLIENT_ID as string | undefined,
+      secret: import.meta.env.SPOTIFY_CLIENT_SECRET as string | undefined,
+      refreshToken: import.meta.env.SPOTIFY_REFRESH_TOKEN as string | undefined,
+    }
+  : undefined;
+
+const accessToken = async () => {
+  const id = process.env.SPOTIFY_CLIENT_ID ?? dev?.id;
+  const secret = process.env.SPOTIFY_CLIENT_SECRET ?? dev?.secret;
+  const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN ?? dev?.refreshToken;
+
+  if (!id || !secret || !refreshToken) return undefined;
+
+  const response = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+      authorization: `Basic ${Buffer.from(`${id}:${secret}`).toString("base64")}`,
+    },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+    }),
+  });
+
+  if (!response.ok) return undefined;
+
+  const payload = await response.json();
+
+  return typeof payload?.access_token === "string"
+    ? payload.access_token
+    : undefined;
+};
+
+export const GET: APIRoute = async () => {
+  try {
+    const token = await accessToken();
+
+    if (!token) return nothing();
+
+    const headers = { authorization: `Bearer ${token}` };
+
+    const current = await fetch(CURRENT_URL, { headers });
+    const currentPayload =
+      current.status === 200 ? await current.json() : undefined;
+
+    // History is only fetched when it might actually be needed.
+    const recent =
+      current.status === 200 && currentPayload?.item
+        ? undefined
+        : await fetch(RECENT_URL, { headers })
+            .then((r) => (r.ok ? r.json() : undefined))
+            .catch(() => undefined);
+
+    const chosen = chooseTrack(
+      { status: current.status, payload: currentPayload },
+      recent,
+    );
+
+    return "title" in chosen ? json(chosen) : nothing();
+  } catch {
+    return nothing();
+  }
+};

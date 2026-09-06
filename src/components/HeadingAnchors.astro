@@ -1,0 +1,24 @@
+---
+// Astro 7's markdown processor (Sätteri) has no autolink option, and the
+// unified pipeline that had one is no longer installed by default —
+// restoring it would swap out the processor every post is rendered by, for
+// a decorative affordance. So the anchor is added client-side instead.
+//
+// Nothing readable is lost without JS: Astro still emits the heading ids
+// themselves, so every deep link into an article keeps working.
+---
+
+<script>
+    document
+        .querySelectorAll<HTMLElement>(".article-content :is(h2, h3)[id]")
+        .forEach((heading) => {
+            const anchor = document.createElement("a");
+
+            anchor.href = `#${heading.id}`;
+            anchor.className = "heading-anchor";
+            anchor.textContent = "#";
+            anchor.setAttribute("aria-label", "link to this section");
+
+            heading.append(anchor);
+        });
+</script>

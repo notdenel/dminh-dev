@@ -4,6 +4,8 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import SectionDivider from "../../components/SectionDivider.astro";
 import ArticleHeader from "../../components/ArticleHeader.astro";
+import ReadingProgress from "../../components/ReadingProgress.astro";
+import HeadingAnchors from "../../components/HeadingAnchors.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import { formatMonthYearRange } from "../../utils/formatDate";
@@ -34,6 +36,9 @@ const dateRange = formatMonthYearRange(
     title={`${project.data.title} | dminh.dev`}
     description={project.data.description}
 >
+    <ReadingProgress />
+    <HeadingAnchors />
+
     <Header />
 
     <main class="flex-1">
@@ -44,13 +49,13 @@ const dateRange = formatMonthYearRange(
                 metadata={dateRange
                     ? [project.data.status, dateRange]
                     : [project.data.status]}
-                pills={project.data.technologies}
+                technologies={project.data.technologies}
             >
                 {
                     (project.data.repoUrl ||
                         project.data.demoUrl ||
                         project.data.writeupUrl) && (
-                        <div class="flex flex-wrap gap-4 text-sm font-semibold">
+                        <div class="flex flex-wrap gap-4 text-ui font-semibold">
                             {project.data.repoUrl && (
                                 <a
                                     href={project.data.repoUrl}
@@ -88,7 +93,7 @@ const dateRange = formatMonthYearRange(
 
             <SectionDivider />
 
-            <div class="article-content mt-8">
+            <div class="article-content mt-group">
                 <Content />
             </div>
         </article>

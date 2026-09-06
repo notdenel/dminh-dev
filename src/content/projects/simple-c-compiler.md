@@ -1,13 +1,13 @@
 ---
 title: "Simple C Compiler"
-description: "A multi-phase compiler for a subset of C, including lexical analysis, parsing, semantic analysis, scoped symbol tables, type checking, AST-based code generation for 32-bit x86/Linux Assembly."
+description: "A multi-phase compiler for a subset of C, from lexical analysis through 32-bit x86 assembly generation."
 technologies:
   - C++
   - x86 Assembly
   - Linux
   - GDB
-status: "Completed"
-type: "Coursework"
+status: "completed"
+type: "coursework"
 featured: true
 order: 2
 startDate: 2026-03

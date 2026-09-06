@@ -1,0 +1,22 @@
+---
+type Props = {
+    tags: string[];
+};
+
+const { tags } = Astro.props;
+---
+
+{
+    tags.length > 0 && (
+        <div class="tag-row">
+            {tags.map((tag) => (
+                <a
+                    href={`/blog/tags/${encodeURIComponent(tag)}`}
+                    class="tag-link"
+                >
+                    {tag}
+                </a>
+            ))}
+        </div>
+    )
+}

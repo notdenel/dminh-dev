@@ -1,0 +1,24 @@
+---
+type Props = {
+    technologies: string[];
+};
+
+const { technologies } = Astro.props;
+---
+
+{
+    technologies.length > 0 && (
+        <span class="tech-line">
+            {technologies.map((technology, index) => (
+                <>
+                    {index > 0 && (
+                        <span class="tech-line-dot" aria-hidden="true">
+                            •
+                        </span>
+                    )}
+                    <span>{technology}</span>
+                </>
+            ))}
+        </span>
+    )
+}
