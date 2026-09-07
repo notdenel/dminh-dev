@@ -37,10 +37,27 @@ const featuredProjects = (await getCollection("projects"))
       <dl class="now-grid">
         <div>
           <dt>i'm</dt>
-          <dd>
-            <span class="typed-text" data-typed>{PHRASES[0].text}</span><span
-              class="caret"
-              aria-hidden="true"></span>
+          <dd class="typed-cell">
+            {/* Every phrase, stacked in the same grid cell and hidden, so the
+                cell is always as tall as the longest one AT THE CURRENT WIDTH
+                and the three rows below never move. At 402px four of the eight
+                phrases wrap to two lines, so the row jumped on most changes.
+                Reserving by measurement rather than a fixed height means a
+                phrase added later is accounted for on its own. */}
+            {
+              PHRASES.map((phrase) => (
+                <span class="typed-ghost" aria-hidden="true">
+                  <span class="typed-text">{phrase.text}</span>
+                  <span class="caret" />
+                </span>
+              ))
+            }
+
+            <span class="typed-live">
+              <span class="typed-text" data-typed>{PHRASES[0].text}</span><span
+                class="caret"
+                aria-hidden="true"></span>
+            </span>
           </dd>
         </div>
 

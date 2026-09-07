@@ -6,10 +6,14 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer class="mt-section border-t border-line pt-6 text-ui font-semibold text-muted">
+  <!-- Centred while stacked, so the two lines read as one block instead of
+       two ragged left edges; back to opposite ends once they share a row. -->
   <div
-    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+    class="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between"
   >
-    <p class="flex flex-wrap items-center gap-x-3 gap-y-1">
+    <p
+      class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start"
+    >
       <span>&copy; {currentYear} Daniel Sims</span>
 
       {

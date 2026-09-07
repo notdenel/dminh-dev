@@ -461,18 +461,6 @@ body {
     opacity: 1;
 }
 
-/* THE TYPED LINE
-   One of the two loud flairs this page is allowed. The markup ships the
-   first phrase already typed, so there is no empty line before the script
-   runs and no reflow when it takes over. */
-.typed-line {
-    color: var(--color-muted);
-    font-family: var(--font-copy);
-    font-size: var(--text-meta);
-    line-height: 1.72;
-    min-height: 1.72em;
-}
-
 /* THE LEDE
    Body size, but noticeably tighter than body leading. Prose is set loose
    because it is read line after line for minutes; a lede is read once, and
@@ -632,8 +620,11 @@ body {
    Mono, dot-separated. Every machine-readable field in a project row shares
    one voice; the prose has another. */
 .tech-line {
-    display: block;
-    margin-top: 0.4375rem;
+    /* flex-wrap, not a plain block: the items are the only break points, so a
+       long list wraps between technologies instead of inside one. */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
     margin-top: 0.5rem;
     color: var(--color-faint);
     font-family: var(--font-data);
@@ -642,6 +633,12 @@ body {
     letter-spacing: 0.01em;
 }
 
+.tech-line-item {
+    white-space: nowrap;
+}
+
+/* Inside the item it follows, so a wrapped line ends with the separator and
+   the next line starts with a name rather than a stray dot. */
 .tech-line-dot {
     margin: 0 0.4rem;
 }
@@ -781,15 +778,24 @@ body {
 @media (width < 40rem) {
     .project-row {
         grid-template-columns: auto 1fr;
+        column-gap: 0.5rem;
     }
 
     .project-row-rail {
         grid-area: 1 / 1;
     }
 
+    /* Pinned to opposite edges these left a 260px void between them on a
+       phone. Set next to each other they read as one metadata line, the same
+       shape the article header and the post previews already use. */
     .project-row-designation {
         grid-area: 1 / 2;
-        justify-self: end;
+        justify-self: start;
+    }
+
+    .project-row-designation::before {
+        content: "•";
+        margin-right: 0.5rem;
     }
 
     .project-row-name {
@@ -1041,6 +1047,18 @@ body {
     align-items: baseline;
 }
 
+/* The widest label inks at 73px, so 7.5rem spent 47px of a 402px phone on
+   nothing. At 5.25rem seven of the eight phrases fit on one line instead of
+   four, which is also what keeps the reserved row above to two lines. */
+@media (width < 40rem) {
+
+    .now-grid>div,
+    .now-row {
+        grid-template-columns: 5.25rem 1fr;
+        gap: 0.75rem;
+    }
+}
+
 .now-grid dt,
 .now-row [data-now-label] {
     color: var(--color-faint);
@@ -1065,6 +1083,40 @@ body {
    column and the value styling above; only the icon needs placing beside the
    track. It was a div of loose spans before, which is not valid inside a dl
    and needed explicit grid areas to look right at all. */
+/* The typed row reserves the height of its tallest phrase by stacking every
+   phrase in one grid cell. Only the live line is visible; the hidden copies
+   exist to be measured, which is why the reservation follows the viewport
+   instead of a hardcoded two lines. */
+.typed-cell {
+    display: grid;
+}
+
+.typed-cell>* {
+    grid-area: 1 / 1;
+}
+
+.typed-ghost {
+    visibility: hidden;
+}
+
+/* Both the ghosts and the live line take their size from `.now-grid dd`. An
+   earlier `.typed-line` rule here, left over from when this was a standalone
+   sentence rather than a row of the grid, set the live copy to 17px/1.72
+   while the ghosts inherited 13px/1.5 — so the ghosts measured a different
+   line than the one on screen and reserved too little. */
+.typed-live {
+    display: block;
+}
+
+/* A ghost holds the same markup as the live line, caret included, so the two
+   wrap identically. Hand-copying the caret's metrics onto a pseudo-element
+   was not enough: the caret is a 1.05em inline-block below the baseline and
+   it grows the line box it sits in, so a mirror that got the width right
+   still under-reserved the live line by a whole line. */
+.typed-ghost .caret {
+    display: inline-block;
+}
+
 .now-value {
     display: flex;
     /* min-width:0 so the track can shrink and ellipsis instead of forcing the
