@@ -6,14 +6,14 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer class="mt-section border-t border-line pt-6 text-ui font-semibold text-muted">
-  <!-- Centred while stacked, so the two lines read as one block instead of
-       two ragged left edges; back to opposite ends once they share a row. -->
+  <!-- Opposite ends at every width that can hold them: the two halves measure
+       328px against 335 at 375px, so only a 360px-or-narrower screen drops the
+       icons to their own line. Same flex-wrap fallback as the header, so the
+       two agree instead of each having its own breakpoint. -->
   <div
-    class="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between"
+    class="flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-3"
   >
-    <p
-      class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start"
-    >
+    <p class="flex flex-wrap items-center gap-x-3 gap-y-1">
       <span>&copy; {currentYear} Daniel Sims</span>
 
       {
@@ -36,7 +36,8 @@ const currentYear = new Date().getFullYear();
       }
     </p>
 
-    <div class="flex items-center gap-4">
+    <!-- Tighter on a phone, for the same 8px that keeps the row alive at 360px. -->
+    <div class="flex items-center gap-3 sm:gap-4">
       <SocialIconLink
         href="https://github.com/notdenel"
         label="GitHub"
