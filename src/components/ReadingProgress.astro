@@ -22,11 +22,7 @@
 </div>
 
 <script>
-    import {
-        railProgress,
-        railHasStops,
-        stopPositions,
-    } from "../utils/readingRail";
+    import { railProgress, railStops } from "../utils/readingRail";
 
     const rail = document.querySelector<HTMLElement>("[data-rail]");
     const railFill = document.querySelector<HTMLElement>("[data-rail-fill]");
@@ -57,16 +53,38 @@
             return copy.textContent?.trim() ?? "";
         };
 
-        const anchors = headings.map((heading) => {
-            const label = labelOf(heading);
-            const el = document.createElement("a");
-            el.className = "reading-rail-stop";
-            el.href = `#${heading.id}`;
-            el.dataset.label = label;
-            el.setAttribute("aria-label", `Jump to ${label}`);
-            stopsBox.appendChild(el);
-            return el;
-        });
+        // A stop is a link only when clicking it goes somewhere of its own.
+        // Where it does not, the rail draws marks instead — spans, not
+        // disabled anchors: nothing to click, focus, hover or read out. A dot
+        // that looks like a control and is not would be its own small lie.
+        let rendered: HTMLElement[] = [];
+        let mode: "nav" | "marks" | null = null;
+
+        const render = (next: "nav" | "marks") => {
+            if (next === mode) return;
+            mode = next;
+
+            stopsBox.replaceChildren();
+            stopsBox.toggleAttribute("aria-hidden", next === "marks");
+
+            rendered = headings.map((heading) => {
+                if (next === "marks") {
+                    const mark = document.createElement("span");
+                    mark.className = "reading-rail-mark";
+                    return mark;
+                }
+
+                const label = labelOf(heading);
+                const link = document.createElement("a");
+                link.className = "reading-rail-stop";
+                link.href = `#${heading.id}`;
+                link.dataset.label = label;
+                link.setAttribute("aria-label", `Jump to ${label}`);
+                return link;
+            });
+
+            stopsBox.append(...rendered);
+        };
 
         // Layout and scroll are deliberately separate. Measuring the headings
         // on every scroll frame made the dots jitter: rect.top + scrollY drifts
@@ -97,20 +115,29 @@
             const minGap =
                 railHeight > 0 && dotSize > 0 ? dotSize / railHeight : 0;
 
-            const stops = railHasStops(max, window.innerHeight)
-                ? stopPositions(headings.map(docTop), max, minGap)
-                : [];
+            // Marks are placed against the article, so the article has to be
+            // measured in the same document space the headings are.
+            const box = article.getBoundingClientRect();
+            const { mode: next, stops } = railStops(
+                headings.map(docTop),
+                max,
+                minGap,
+                box.top + window.scrollY,
+                box.height,
+            );
 
-            anchors.forEach((el) => {
-                el.hidden = true;
+            render(next);
+
+            stops.forEach(({ index, at }) => {
+                rendered[index].style.top = `${at * 100}%`;
             });
 
-            shown = stops.map(({ index, at }) => {
-                const el = anchors[index];
-                el.hidden = false;
-                el.style.top = `${at * 100}%`;
-                return { el, at };
-            });
+            // Only navigation carries a read state. A mark says where a
+            // heading is, never how much of it you have got through.
+            shown =
+                next === "nav"
+                    ? stops.map(({ index, at }) => ({ el: rendered[index], at }))
+                    : [];
         };
 
         const paint = () => {

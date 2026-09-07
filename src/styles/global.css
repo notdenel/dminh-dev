@@ -287,6 +287,14 @@ body {
     --stop-done: var(--color-accent-hi);
     --stop-scale: 1.15;
 
+    /* A graduation ACROSS the rail, not a smaller dot. Shrinking the dot
+       only made it look like a stop someone was failing to click; a different
+       mark reads as a different thing. 0.16 alpha at this size was invisible
+       against the page, so it carries more weight than the stop's idle. */
+    --mark-length: 9px;
+    --mark-weight: 2px;
+    --mark-idle: rgba(255, 255, 255, 0.34);
+
     position: fixed;
     /* Centred by arithmetic rather than by transform. A transform on a fixed
        element promotes it to its own compositor layer, which is where the
@@ -385,6 +393,19 @@ body {
     box-shadow:
         0 0 0 2px var(--color-page),
         0 0 0 3.5px var(--color-accent-hi);
+}
+
+/* A mark, not a disabled stop. It carries no href, no label, no hover and no
+   read state — it only says where a heading sits in the article, on the pages
+   where the scrollbar cannot tell two headings apart. See readingRail.ts. */
+.reading-rail-mark {
+    position: absolute;
+    left: 50%;
+    height: var(--mark-weight);
+    width: var(--mark-length);
+    transform: translate(-50%, -50%);
+    border-radius: var(--rail-radius);
+    background: var(--mark-idle);
 }
 
 /* The heading name, opening into the margin rather than over the text. */

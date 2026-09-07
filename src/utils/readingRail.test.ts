@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { railProgress, railHasStops, stopPositions } from "./readingRail.ts";
+import {
+  railProgress,
+  railStops,
+  markPositions,
+  stopPositions,
+} from "./readingRail.ts";
 
 // The rail's fill and its stops must live in the SAME coordinate space, or
 // they contradict each other on screen. They are both scroll positions.
@@ -81,17 +86,59 @@ test("stopPositions measures the gap from the last KEPT stop, not the last seen"
   assert.deepEqual(at.map((s) => s.index), [0]);
 });
 
-// Below one viewport of scroll, more than half the document sits in the final
-// screen — which cannot be scrolled to — so most stops would be fiction. Real
-// numbers from the project pages: 517, 603 and 801px of scroll at a 900px
-// viewport, where every heading after the first shared the same destination.
-test("railHasStops is false when the page scrolls less than one viewport", () => {
-  assert.equal(railHasStops(517, 900), false);
-  assert.equal(railHasStops(603, 900), false);
-  assert.equal(railHasStops(801, 900), false);
+// A rail that shows SOME of an article's headings is worse than one that shows
+// none: two dots on a three-heading page silently claims the third does not
+// exist. So the mode is all-or-nothing, and the test is not a viewport
+// heuristic but the filter's own answer — do ALL the headings survive?
+
+test("railStops navigates when every heading has its own destination", () => {
+  const r = railStops([435, 1200, 2100], 2700, 0.027, 300, 2400);
+
+  assert.equal(r.mode, "nav");
+  assert.deepEqual(r.stops.map((s) => s.index), [0, 1, 2]);
 });
 
-test("railHasStops is true once the page scrolls a full viewport", () => {
-  assert.equal(railHasStops(900, 900), true);
-  assert.equal(railHasStops(2700, 900), true);
+test("railStops falls back to marks when any heading would be dropped", () => {
+  // /projects/simple-c-compiler at 1280x900: three headings, 517px of scroll,
+  // and the last two both resolve to the foot of the page.
+  const r = railStops([435, 717, 1101], 517, 0.027, 300, 900);
+
+  assert.equal(r.mode, "marks");
+});
+
+test("marks mode keeps EVERY heading — it is never a subset", () => {
+  const r = railStops([435, 717, 1101], 517, 0.027, 300, 900);
+
+  assert.equal(r.stops.length, 3);
+  assert.deepEqual(r.stops.map((s) => s.index), [0, 1, 2]);
+});
+
+test("marks are placed in article space, so they stay distinct", () => {
+  const r = railStops([435, 717, 1101], 517, 0.027, 300, 900);
+  const at = r.stops.map((s) => s.at);
+
+  assert.deepEqual(at, [135 / 900, 417 / 900, 801 / 900]);
+  assert.ok(at[1] - at[0] > 0.027 && at[2] - at[1] > 0.027);
+});
+
+test("railStops has no navigation to offer for an article with no headings", () => {
+  const r = railStops([], 2700, 0.027, 300, 2400);
+
+  assert.equal(r.mode, "marks");
+  assert.deepEqual(r.stops, []);
+});
+
+test("markPositions places a heading by its offset into the article", () => {
+  assert.deepEqual(markPositions([435, 717], 300, 900).map((s) => s.at), [
+    135 / 900,
+    417 / 900,
+  ]);
+});
+
+test("markPositions clamps a heading outside the measured article", () => {
+  assert.deepEqual(markPositions([100, 5000], 300, 900).map((s) => s.at), [0, 1]);
+});
+
+test("markPositions survives an article of no height", () => {
+  assert.deepEqual(markPositions([435], 300, 0), [{ index: 0, at: 0 }]);
 });
