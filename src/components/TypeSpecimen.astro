@@ -1,0 +1,64 @@
+---
+// The type scale, set in itself. Each row is rendered at its own token so the
+// specimen is the scale rather than a description of it.
+import { readFileSync } from "node:fs";
+import { parseTokens, tokensMatching } from "../utils/designTokens";
+
+const tokens = parseTokens(readFileSync("src/styles/global.css", "utf8"));
+
+// --text-<name> is a step; --text-<name>--line-height is that step's leading,
+// which belongs beside it rather than as a row of its own.
+const steps = tokensMatching(tokens, "--text-").filter(
+    (token) => !token.name.endsWith("--line-height"),
+);
+
+// Which face each step is worn in, matching how the site uses them.
+const FACE: Record<string, string> = {
+    display: "--font-ui",
+    title: "--font-ui",
+    heading: "--font-ui",
+    subhead: "--font-ui",
+    body: "--font-copy",
+    meta: "--font-copy",
+    ui: "--font-chrome",
+    micro: "--font-data",
+};
+
+const rows = steps.map((step) => {
+    const key = step.name.replace("--text-", "");
+    const leading = tokens.find((t) => t.name === `${step.name}--line-height`);
+
+    return {
+        key,
+        value: step.value,
+        leading: leading?.value,
+        note: step.note ?? leading?.note,
+        face: FACE[key] ?? "--font-copy",
+    };
+});
+---
+
+<ul class="specimen" role="list">
+    {
+        rows.map((row) => (
+            <li class="specimen-row">
+                <span class="specimen-meta">
+                    <code class="specimen-name">{row.key}</code>
+                    <code class="specimen-value">
+                        {row.value}
+                        {row.leading && ` / ${row.leading}`}
+                    </code>
+                </span>
+
+                <span
+                    class="specimen-sample"
+                    style={`font-family: var(${row.face}); font-size: var(${"--text-" + row.key}); line-height: ${row.leading ?? "1.4"}`}
+                >
+                    understanding why things work
+                </span>
+
+                {row.note && <span class="specimen-note">{row.note}</span>}
+            </li>
+        ))
+    }
+</ul>

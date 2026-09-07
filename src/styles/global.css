@@ -1141,3 +1141,122 @@ body {
     align-items: center;
     gap: 0.5rem;
 }
+
+/* THE SPECIMENS
+   The palette and the type scale, set in themselves. Every chip is painted
+   with the live token and every sample line is rendered at its own step, so
+   what is on screen IS the system rather than a picture of it. */
+.swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.swatch {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.swatch-chip {
+    display: block;
+    height: 3.5rem;
+    border-radius: 0.375rem;
+    /* A hairline, or --color-page reads as a hole rather than a swatch. */
+    box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+/* A translucent token over the page colour is indistinguishable from the
+   page. Split the chip so the alpha is legible against both ends. */
+.swatch-chip.is-layered {
+    background-image: linear-gradient(
+        to right,
+        var(--color-page) 0 50%,
+        var(--color-ink) 50% 100%
+    ) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.swatch-chip.is-layered::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: inherit;
+}
+
+.swatch-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1875rem;
+}
+
+.swatch-name {
+    color: var(--color-soft);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+}
+
+.swatch-value {
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+}
+
+.swatch-note,
+.specimen-note {
+    margin-top: 0.25rem;
+    color: var(--color-muted);
+    font-family: var(--font-copy);
+    font-size: var(--text-micro);
+    line-height: 1.6;
+}
+
+.specimen {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+}
+
+.specimen-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--color-line);
+    padding: 1.125rem 0;
+}
+
+.specimen-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.specimen-name {
+    color: var(--color-accent-hi);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+}
+
+.specimen-value {
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+/* The point of the row. It must be free to be as tall as its own step. */
+.specimen-sample {
+    display: block;
+    color: var(--color-ink);
+    /* A display step is wider than a phone; let it shrink rather than push
+       the page sideways. */
+    overflow-wrap: anywhere;
+}

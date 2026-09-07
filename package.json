@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "test": "node --test src/utils/formatDate.test.ts src/utils/readingTime.test.ts src/utils/groupByYear.test.ts src/utils/nowPlaying.test.ts src/utils/readingRail.test.ts"
+    "test": "node --test src/utils/formatDate.test.ts src/utils/readingTime.test.ts src/utils/groupByYear.test.ts src/utils/nowPlaying.test.ts src/utils/readingRail.test.ts src/utils/designTokens.test.ts"
   },
   "dependencies": {
     "@astrojs/vercel": "^11.0.10",
