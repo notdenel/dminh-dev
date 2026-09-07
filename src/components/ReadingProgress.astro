@@ -1,0 +1,181 @@
+---
+// Article pages only. PROG-V: a vertical rail beside the column, with a stop
+// per heading. It replaces the top hairline wherever there is a gutter to put
+// it in; below that breakpoint the hairline stays, because a phone has no
+// gutter and no indicator at all would be a regression.
+//
+// Fill and stops are both scroll positions, so a stop sits exactly where the
+// fill lands once you have clicked it. A page too short for its stops to be
+// distinct shows the rail without them — see readingRail.ts for why that is a
+// limit of the scrollbar rather than of this component.
+---
+
+<div class="reading-rail" data-rail hidden>
+    <div class="reading-rail-track">
+        <i data-rail-fill></i>
+    </div>
+    <nav class="reading-rail-stops" data-rail-stops aria-label="Sections"></nav>
+</div>
+
+<div class="reading-progress" aria-hidden="true" hidden>
+    <i data-progress></i>
+</div>
+
+<script>
+    import { railProgress, railStops } from "../utils/readingRail";
+
+    const rail = document.querySelector<HTMLElement>("[data-rail]");
+    const railFill = document.querySelector<HTMLElement>("[data-rail-fill]");
+    const stopsBox = document.querySelector<HTMLElement>("[data-rail-stops]");
+    const bar = document.querySelector<HTMLElement>(".reading-progress");
+    const barFill = document.querySelector<HTMLElement>("[data-progress]");
+    const article = document.querySelector<HTMLElement>(".article-content");
+
+    if (rail && railFill && stopsBox && bar && barFill && article) {
+        // [id] because a heading without one yields href="#", which jumps to
+        // the top of the page while its dot sits partway down the rail.
+        const headings = [
+            ...article.querySelectorAll<HTMLElement>("h2[id]"),
+        ];
+
+        // Read fresh on every measure rather than stored: an image or a late
+        // font shifts every heading below it.
+        const docTop = (el: Element) =>
+            el.getBoundingClientRect().top + window.scrollY;
+
+        // HeadingAnchors appends a "#" link inside every heading at load, and
+        // the order between these two scripts is not guaranteed. Read the
+        // heading without it rather than trusting who ran first — stripping a
+        // trailing "#" would be the wrong fix for a heading like "Learning C#".
+        const labelOf = (heading: HTMLElement) => {
+            const copy = heading.cloneNode(true) as HTMLElement;
+            copy.querySelector(".heading-anchor")?.remove();
+            return copy.textContent?.trim() ?? "";
+        };
+
+        // A stop is a link only when clicking it goes somewhere of its own.
+        // Where it does not, the rail draws marks instead — spans, not
+        // disabled anchors: nothing to click, focus, hover or read out. A dot
+        // that looks like a control and is not would be its own small lie.
+        let rendered: HTMLElement[] = [];
+        let mode: "nav" | "marks" | null = null;
+
+        const render = (next: "nav" | "marks") => {
+            if (next === mode) return;
+            mode = next;
+
+            stopsBox.replaceChildren();
+            stopsBox.toggleAttribute("aria-hidden", next === "marks");
+
+            rendered = headings.map((heading) => {
+                if (next === "marks") {
+                    const mark = document.createElement("span");
+                    mark.className = "reading-rail-mark";
+                    return mark;
+                }
+
+                const label = labelOf(heading);
+                const link = document.createElement("a");
+                link.className = "reading-rail-stop";
+                link.href = `#${heading.id}`;
+                link.dataset.label = label;
+                link.setAttribute("aria-label", `Jump to ${label}`);
+                return link;
+            });
+
+            stopsBox.append(...rendered);
+        };
+
+        // Layout and scroll are deliberately separate. Measuring the headings
+        // on every scroll frame made the dots jitter: rect.top + scrollY drifts
+        // by a fraction of a pixel between frames, and rewriting `top` with a
+        // drifting value moves the dots while the page moves. Positions are a
+        // property of the layout, so they change only when the layout does.
+        let max = 0;
+        let shown: { el: HTMLElement; at: number }[] = [];
+
+        const measure = () => {
+            max = document.documentElement.scrollHeight - window.innerHeight;
+
+            // Nothing to scroll means a bar that is full and never moves,
+            // which is noise rather than information.
+            const idle = max <= 0;
+            rail.hidden = idle;
+            bar.hidden = idle;
+            if (idle) return;
+
+            // Two dots may not overlap, so the smallest gap worth drawing is
+            // one dot across. Read from the token, not from an anchor: a pass
+            // that yields no stops leaves every anchor hidden and measuring
+            // 0px, which silently disabled this guard on the pass after.
+            const railHeight = rail.getBoundingClientRect().height;
+            const dotSize = parseFloat(
+                getComputedStyle(rail).getPropertyValue("--stop-size"),
+            );
+            const minGap =
+                railHeight > 0 && dotSize > 0 ? dotSize / railHeight : 0;
+
+            // Marks are placed against the article, so the article has to be
+            // measured in the same document space the headings are.
+            const box = article.getBoundingClientRect();
+            const { mode: next, stops } = railStops(
+                headings.map(docTop),
+                max,
+                minGap,
+                box.top + window.scrollY,
+                box.height,
+            );
+
+            render(next);
+
+            stops.forEach(({ index, at }) => {
+                rendered[index].style.top = `${at * 100}%`;
+            });
+
+            // Only navigation carries a read state. A mark says where a
+            // heading is, never how much of it you have got through.
+            shown =
+                next === "nav"
+                    ? stops.map(({ index, at }) => ({ el: rendered[index], at }))
+                    : [];
+        };
+
+        const paint = () => {
+            queued = false;
+            if (max <= 0) return;
+
+            const progress = railProgress(window.scrollY, max);
+
+            // height, not transform: scaleY. Scaling a 2px-wide element
+            // promotes it to its own compositor layer and resamples the
+            // texture every frame, which is what left accent-coloured
+            // remnants behind after the rail had been filled once.
+            railFill.style.height = `${progress * 100}%`;
+            barFill.style.transform = `scaleX(${progress})`;
+
+            shown.forEach((stop) => {
+                stop.el.classList.toggle("is-read", progress >= stop.at - 0.002);
+            });
+        };
+
+        let queued = false;
+
+        const queue = () => {
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(paint);
+        };
+
+        const remeasure = () => {
+            measure();
+            paint();
+        };
+
+        addEventListener("scroll", queue, { passive: true });
+        addEventListener("resize", remeasure, { passive: true });
+        new ResizeObserver(remeasure).observe(article);
+        document.fonts?.ready.then(remeasure);
+
+        remeasure();
+    }
+</script>

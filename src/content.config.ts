@@ -31,7 +31,7 @@ const projects = defineCollection({
         description: z.string(),
         technologies: z.array(z.string()).default([]),
 
-        status: z.enum(["Ongoing", "Completed", "Paused", "Archived", "Deprecated"]),
+        status: z.enum(["ongoing", "completed", "paused", "archived", "deprecated"]),
         type: z.string(),
 
         featured: z.boolean().default(false),

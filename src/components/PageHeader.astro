@@ -10,22 +10,22 @@ type Props = {
 const { title, lede, backHref } = Astro.props;
 ---
 
-<section class="space-y-6">
+<section class="flex flex-col gap-6">
     {
         backHref && (
-            <div class="mb-6">
+            <div class="mb-2">
                 <BackLink href={backHref} />
             </div>
         )
     }
 
-    <h1 class="text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+    <h1 class="text-display font-semibold tracking-tight text-balance text-ink">
         {title}
     </h1>
 
     {
         lede && (
-            <p class="font-copy max-w-2xl text-lg leading-8 text-soft">
+            <p class="page-lede font-copy max-w-2xl text-body text-soft">
                 {lede}
             </p>
         )

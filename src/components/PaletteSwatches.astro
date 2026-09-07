@@ -1,0 +1,71 @@
+---
+// The palette, read out of global.css at build time rather than drawn here.
+// The chip is painted with the live `var(--token)` and the label is the value
+// parsed from the same file, so a retuned colour moves both at once and there
+// is no second copy to go stale.
+import globalCss from "../styles/global.css?raw";
+import { parseTokens, resolveToken } from "../utils/designTokens";
+
+type Props = {
+    group: "accent" | "neutral" | "surface";
+};
+
+const { group } = Astro.props;
+
+const tokens = parseTokens(globalCss);
+
+const GROUPS = {
+    // The ramp, light to dark. 500 is the one the site actually wears.
+    accent: [
+        "--color-accent-200",
+        "--color-accent-300",
+        "--color-accent-400",
+        "--color-accent-500",
+        "--color-accent-600",
+        "--color-accent-700",
+    ],
+    // Four steps of text, brightest to quietest.
+    neutral: ["--color-ink", "--color-soft", "--color-muted", "--color-faint"],
+    surface: [
+        "--color-page",
+        "--color-surface",
+        "--color-line",
+        "--color-accent-muted",
+        "--color-accent-surface",
+    ],
+} as const;
+
+const swatches = GROUPS[group].map((name) => ({
+    name,
+    value: resolveToken(tokens, name),
+    note: tokens.find((token) => token.name === name)?.note,
+    // A translucent token needs something behind it or it reads as the page.
+    layered: resolveToken(tokens, name).startsWith("rgba"),
+}));
+
+// Guard against a rename in global.css silently emptying the block.
+const missing = swatches.filter((swatch) => !swatch.value).map((s) => s.name);
+if (missing.length) {
+    throw new Error(`PaletteSwatches: no such token in global.css: ${missing.join(", ")}`);
+}
+---
+
+<ul class="swatches" role="list">
+    {
+        swatches.map((swatch) => (
+            <li class="swatch">
+                <span
+                    class:list={["swatch-chip", swatch.layered && "is-layered"]}
+                    style={`--chip: var(${swatch.name})`}
+                    aria-hidden="true"
+                />
+
+                <span class="swatch-meta">
+                    <code class="swatch-name">{swatch.name.replace("--color-", "")}</code>
+                    <code class="swatch-value">{swatch.value}</code>
+                    {swatch.note && <span class="swatch-note">{swatch.note}</span>}
+                </span>
+            </li>
+        ))
+    }
+</ul>

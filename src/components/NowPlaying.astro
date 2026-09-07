@@ -1,0 +1,105 @@
+---
+// Homepage only. Ships hidden and stays hidden unless the route hands back a
+// real track, so every failure — no credentials, a dead token, Spotify down,
+// JS off — looks the same to a visitor: the line simply is not there.
+---
+
+<div class="now-row" data-now hidden>
+    <dt data-now-label></dt>
+
+    <dd class="now-value">
+    {/* Bars while something is playing, a quiet note when it is only the
+        last thing played. The icon carries the state, so the label does not
+        have to work as hard. */}
+    <span class="eq" aria-hidden="true" data-now-eq hidden
+        ><i></i><i></i><i></i></span
+    >
+
+    {/* The span carries hidden, not the svg: Astro's SVGAttributes has no
+        hidden prop and the build refuses it. */}
+    <span class="now-note" aria-hidden="true" data-now-note hidden>
+        <svg viewBox="0 0 14 14" width="12" height="12">
+        <path
+            d="M5.2 10.6V3.4l7-1.6v7.2"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linejoin="round"></path>
+        <circle cx="3.5" cy="10.6" r="1.75" fill="currentColor"></circle>
+            <circle cx="10.5" cy="9" r="1.75" fill="currentColor"></circle>
+        </svg>
+    </span>
+
+        <a
+            data-now-track
+            class="now-playing-track"
+            target="_blank"
+            rel="noopener noreferrer"></a>
+    </dd>
+</div>
+
+<script>
+    const row = document.querySelector<HTMLElement>("[data-now]");
+    const eq = document.querySelector<HTMLElement>("[data-now-eq]");
+    const note = document.querySelector<HTMLElement>("[data-now-note]");
+    const label = document.querySelector<HTMLElement>("[data-now-label]");
+    const track = document.querySelector<HTMLAnchorElement>("[data-now-track]");
+
+    if (row && label && track) {
+        const read = () =>
+            // no-store, not just a short max-age: a reload otherwise renders
+            // straight from the browser cache and shows the previous track
+            // before any request goes out at all.
+            fetch("/api/now-playing", { cache: "no-store" })
+            .then((response) => (response.ok ? response.json() : null))
+            .then((data) => {
+                // A failed poll keeps whatever is already on screen rather
+                // than blanking the line: the last track is still true.
+                if (!data || typeof data.title !== "string") return;
+
+                label.textContent = data.playing
+                    ? "now playing"
+                    : "last played";
+
+                // Both ship hidden, so a failure never leaves a stray icon
+                // sitting next to nothing.
+                if (eq) eq.hidden = !data.playing;
+                if (note) note.hidden = !!data.playing;
+
+                // textContent, never innerHTML: these strings are whatever
+                // Spotify returns, and a track name can contain anything.
+                track.textContent = data.artist
+                    ? `${data.artist} — ${data.title}`
+                    : data.title;
+
+                // The line is clipped with an ellipsis when it is too long for
+                // the column, so keep the whole thing reachable on hover.
+                track.title = track.textContent ?? "";
+
+                if (typeof data.url === "string" && data.url.startsWith("https://open.spotify.com/")) {
+                    track.href = data.url;
+                } else {
+                    track.removeAttribute("href");
+                }
+
+                row.hidden = false;
+            })
+            .catch(() => {
+                // Deliberately silent. The line stays hidden.
+            });
+
+        read();
+
+        // The route caches for 30s, so polling faster than that only re-reads
+        // the same response out of the browser cache. A hidden tab is not
+        // worth a request at all, and coming back to one should not wait up
+        // to 30s to catch up.
+        setInterval(() => {
+            if (!document.hidden) read();
+        }, 30_000);
+
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) read();
+        });
+    }
+</script>

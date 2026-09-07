@@ -1,27 +1,127 @@
-@import "@fontsource-variable/plus-jakarta-sans";
-@import "@fontsource-variable/plus-jakarta-sans/wght-italic.css";
+@import "@fontsource-variable/jost";
+@import "@fontsource-variable/jost/wght-italic.css";
 @import "@fontsource-variable/source-sans-3";
 @import "@fontsource-variable/source-sans-3/wght-italic.css";
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource/ibm-plex-mono/400.css";
 @import "tailwindcss";
 
+/* ACCENT RAMP
+   Hue 260deg. 500 is the base: the smallest rotation off the original
+   #6969cf (240deg) that clears WCAG AA 4.5:1 against --color-page.
+   240deg measured 4.08:1 and failed; 258deg 4.47:1; 260deg 4.53:1.
+   200-300 are legible ON 600-700, so the ends pair with each other.
+
+   `static` so every step is emitted even while unused. Without it Tailwind
+   tree-shakes the unreferenced steps and a raw var(--color-accent-600) in
+   hand-written CSS resolves to nothing, silently. */
+@theme static {
+    --color-accent-200: #d7cdea;
+    --color-accent-300: #c1afe4;
+    --color-accent-400: #aa8ee1;
+    --color-accent-500: #8b69ce;
+    --color-accent-600: #6842b3;
+    --color-accent-700: #4e3384;
+}
+
 @theme {
+    /* NEUTRALS */
     --color-ink: #f2f2f4;
     --color-soft: #b9bac6;
     --color-muted: #878899;
-    --color-faint: #6f7080;
+    /* #6f7080 measured 3.89:1 on --color-page and failed WCAG AA, which took
+       the project year rail, the now-playing line and the image captions with
+       it. #7d7e8e is the smallest lift that clears 4.5 — measured 4.74:1. */
+    --color-faint: #7d7e8e;
 
-    --color-accent: #6969cf;
-    --color-accent-hi: #8b8be6;
-    --color-accent-muted: rgba(105, 105, 207, 0.18);
-    --color-accent-surface: rgba(105, 105, 207, 0.08);
+    /* accent roles — the names components use */
+    --color-accent: var(--color-accent-500);
+    --color-accent-hi: var(--color-accent-400);
+    --color-accent-muted: rgba(139, 105, 206, 0.18);
+    --color-accent-surface: rgba(139, 105, 206, 0.08);
 
+    /* SURFACES */
     --color-page: #101014;
     --color-surface: rgba(255, 255, 255, 0.035);
-    --color-line: rgba(255, 255, 255, 0.13);
+    --color-line: rgba(255, 255, 255, 0.2);
+
+    /* TYPEFACES — four, by job.
+       ui     = the voice: the h1, section headings, every title
+       chrome = small interface text, where ui is widest and least legible
+       copy   = prose
+       data   = machine-readable metadata (dates, technologies, the rail) */
+    --font-ui:
+        "Jost Variable", "Jost", ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-chrome:
+        "Instrument Sans Variable", "Instrument Sans", ui-sans-serif,
+        system-ui, sans-serif;
+    --font-copy:
+        "Source Sans 3 Variable", "Source Sans 3", ui-sans-serif, system-ui,
+        sans-serif;
+    --font-data:
+        "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+        monospace;
+
+    /* TYPE SCALE — eight steps, named by role, nothing off-scale.
+       Tailwind generates a `text-<name>` utility from each of these, so the
+       markup uses text-ui / text-meta / text-display rather than text-sm and
+       friends. That is the point: one edit here moves the whole site, which
+       it could not do while seventeen call sites hardcoded a Tailwind step.
+
+       Sized up from the first pass — at the old values the descriptions in
+       particular read small at 100%, and worse the moment a browser is at
+       110 or 125%. */
+    --text-display: clamp(2.375rem, 1.55rem + 3.6vw, 3.25rem);
+    /* 1.14 left only 6px of ink between the two lines of a wrapped title on a
+       52px face — the descenders nearly touched the caps below. 1.25 doubles
+       that to 12px and still reads as display leading. */
+    --text-display--line-height: 1.25;
+    --text-title: 1.625rem;
+    --text-title--line-height: 1.3;
+    --text-heading: 1.3rem;
+    --text-heading--line-height: 1.4;
+    --text-subhead: 1.1875rem;
+    --text-subhead--line-height: 1.45;
+    --text-body: 1.15rem;
+    --text-body--line-height: 1.7;
+    --text-meta: 1.0625rem;
+    --text-meta--line-height: 1.65;
+    --text-ui: 0.9375rem;
+    --text-ui--line-height: 1.5;
+    --text-micro: 0.8125rem;
+    --text-micro--line-height: 1.25;
+
+    /* SECTION RHYTHM — grouped, not uniform. `group` separates related
+       blocks, `section` separates unrelated ones. Tailwind turns each of
+       these into an `mt-group` / `mt-section` utility, which is the point:
+       the markup names the relationship instead of picking a number, and
+       these two lines retune the whole site's rhythm.
+
+       `section` has to clear the largest gap *inside* a section by a wide
+       margin or the sections read as one column. Inside, the widest is the
+       40px group step, so 96px is 2.4x that. At the old 64px it was 1.6x
+       and the page read as continuous. */
+    --spacing-group: 2.5rem;
+    --spacing-section: 6rem;
+
+    /* RADIUS */
+    --radius-token: 0.35rem;
+    --radius-panel: 0.75rem;
 }
 
 :root {
     color-scheme: dark;
+
+    /* MOTION — one duration and one easing for the whole site. */
+    --motion: 160ms;
+    --ease: ease;
+
+    /* Themed to the palette rather than left as the browser's own chrome.
+       The scrollbar stays: it is a real affordance people drag, and on
+       Windows it is always visible rather than an overlay. */
+    scrollbar-width: thin;
+    scrollbar-color: #34304a var(--color-page);
 }
 
 html {
@@ -31,15 +131,7 @@ html {
 body {
     background: var(--color-page);
     color: var(--color-ink);
-    font-family:
-        "Plus Jakarta Sans Variable",
-        "Plus Jakarta Sans",
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+    font-family: var(--font-ui);
 }
 
 ::selection {
@@ -47,18 +139,47 @@ body {
     color: var(--color-ink);
 }
 
-.font-copy {
-    font-family:
-        "Source Sans 3 Variable",
-        "Source Sans 3",
-        ui-sans-serif,
-        system-ui,
-        sans-serif;
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-page);
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #34304a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #453f61;
+}
+
+/* THE CHROME FACE
+   Jost stays the voice of the site — it keeps the display, the section
+   headings and every title, which is where its character is actually seen.
+   Instrument Sans takes only the small interface text, which is the one
+   place Jost's geometry was costing legibility at 15px. */
+:is(header, footer),
+.site-link,
+.tag-link {
+    font-family: var(--font-chrome);
+}
+
+/* Dates and reading time. These are read, not scanned like a coordinate, so
+   they take the chrome face rather than the data face — a full metadata line
+   set in mono under an article title is more texture than it can carry. */
+.metadata-row {
+    font-family: var(--font-chrome);
+    font-size: var(--text-ui);
+    font-weight: 500;
 }
 
 .site-link {
     color: var(--color-muted);
-    transition: color 160ms ease;
+    transition: color var(--motion) var(--ease);
 }
 
 .site-link:hover {
@@ -67,7 +188,7 @@ body {
 
 .site-link-strong {
     color: var(--color-ink);
-    transition: color 160ms ease;
+    transition: color var(--motion) var(--ease);
 }
 
 .site-link-strong:hover {
@@ -81,8 +202,8 @@ body {
 .site-icon-link {
     color: var(--color-faint);
     transition:
-        color 160ms ease,
-        transform 160ms ease;
+        color var(--motion) var(--ease),
+        transform var(--motion) var(--ease);
 }
 
 .site-icon-link:hover {
@@ -93,50 +214,635 @@ body {
     transform: translateY(1px);
 }
 
-:where(.tag-pill, .tech-pill) {
+/* One line, always. A long title wrapping to two lines was the only row in
+   the grid that broke its rhythm; the full text stays in the title attribute
+   and the link still goes to the track. */
+.now-playing-track {
+    overflow: hidden;
+    color: var(--color-soft);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color var(--motion) var(--ease);
+}
+
+.now-playing-track[href]:hover {
+    color: var(--color-accent-hi);
+}
+
+.eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 10px;
+    flex: none;
+}
+
+.now-note {
+    flex: none;
+    color: var(--color-faint);
+}
+
+.eq i {
+    display: block;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--color-accent-hi);
+}
+
+.eq i:nth-child(1) {
+    height: 5px;
+}
+
+.eq i:nth-child(2) {
+    height: 10px;
+}
+
+.eq i:nth-child(3) {
+    height: 7px;
+}
+
+/* READING RAIL
+   A vertical rail beside the article column with a stop per heading. Every
+   value below is a knob — these are the only lines to touch when retuning it.
+   Fill and stops are both scroll positions, so a stop sits where the fill
+   lands once clicked; a page too short for distinct stops shows the rail
+   alone. See readingRail.ts. */
+.reading-rail {
+    --rail-width: 2px;
+    --rail-length: 50%;
+    /* 0.035 put the track only 8/255 above the page colour — uniform when
+       rendered, but it breaks into dashes under any rescaling. 0.06 is still
+       barely-there and roughly doubles the separation. */
+    --rail-track: rgba(255, 255, 255, 0.06);
+    /* #8b69ce is --color-accent-500; taken through the token so a palette
+       change carries, rather than stranding a literal here */
+    --rail-fill: var(--color-accent);
+    --rail-radius: 999px;
+    /* half the article column: max-w-2xl is 42rem */
+    --article-half: 21rem;
+
+    --stop-size: 12px;
+    --stop-ring: 3.5px;
+    --stop-idle: rgba(255, 255, 255, 0.22);
+    --stop-done: var(--color-accent-hi);
+    --stop-scale: 1.15;
+
+    /* A graduation ACROSS the rail, not a smaller dot. Shrinking the dot
+       only made it look like a stop someone was failing to click; a different
+       mark reads as a different thing. 0.16 alpha at this size was invisible
+       against the page, so it carries more weight than the stop's idle. */
+    --mark-length: 9px;
+    --mark-weight: 2px;
+    --mark-idle: rgba(255, 255, 255, 0.34);
+
+    position: fixed;
+    /* Centred by arithmetic rather than by transform. A transform on a fixed
+       element promotes it to its own compositor layer, which is where the
+       accent remnants came from; plain top/left keeps it on the normal paint
+       path. Percentages resolve against the viewport here, so `top` centres
+       vertically and `left` still lands on the middle of the gutter. */
+    top: calc(50% - var(--rail-length) / 2);
+    left: calc((50% - var(--article-half)) / 2 - var(--stop-size) / 2);
+    z-index: 40;
+    display: none;
+    height: var(--rail-length);
+    width: var(--stop-size);
+    justify-content: center;
+}
+
+/* Only where there is a gutter to put it in. Below this the top hairline
+   stays: a phone has no margin beside the column, and dropping the indicator
+   entirely would be a regression on the width most people read at. */
+@media (min-width: 64rem) {
+    .reading-rail:not([hidden]) {
+        display: flex;
+    }
+
+    .reading-progress {
+        display: none;
+    }
+}
+
+.reading-rail-track {
+    position: relative;
+    width: var(--rail-width);
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--rail-radius);
+    background: var(--rail-track);
+}
+
+/* Grown with height rather than transform: scaleY. Scaling a 2px-wide element
+   resamples its texture every frame and left accent-coloured specks behind
+   once the rail had been filled. Height repaints cleanly. */
+.reading-rail-track i {
+    display: block;
+    height: 0;
+    width: 100%;
+    border-radius: var(--rail-radius);
+    background: var(--rail-fill);
+}
+
+/* The stops sit outside the track so the track can clip its own fill. */
+.reading-rail-stops {
+    position: absolute;
+    inset: 0;
+}
+
+/* The anchor is only the hit area and never transforms beyond centring: the
+   dot and the label are separate pseudo-elements. Scaling the anchor itself
+   would scale the label with it — including its offset — which is what put the
+   label off the left edge of the screen. */
+.reading-rail-stop {
+    position: absolute;
+    left: 50%;
+    height: var(--stop-size);
+    width: var(--stop-size);
+    /* both axes: the dot is centred on its position, so it stays on the rail
+       at any --stop-size */
+    transform: translate(-50%, -50%);
+}
+
+.reading-rail-stop::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--stop-ring) solid var(--color-page);
+    border-radius: 50%;
+    background: var(--stop-idle);
+    transition:
+        background-color var(--motion) var(--ease),
+        transform var(--motion) var(--ease);
+}
+
+.reading-rail-stop.is-read::before {
+    background: var(--stop-done);
+    transform: scale(var(--stop-scale));
+}
+
+.reading-rail-stop:hover::before,
+.reading-rail-stop:focus-visible::before {
+    transform: scale(1.5);
+}
+
+.reading-rail-stop:focus-visible {
+    outline: none;
+}
+
+.reading-rail-stop:focus-visible::before {
+    box-shadow:
+        0 0 0 2px var(--color-page),
+        0 0 0 3.5px var(--color-accent-hi);
+}
+
+/* A mark, not a disabled stop. It carries no href, no label, no hover and no
+   read state — it only says where a heading sits in the article, on the pages
+   where the scrollbar cannot tell two headings apart. See readingRail.ts. */
+.reading-rail-mark {
+    position: absolute;
+    left: 50%;
+    height: var(--mark-weight);
+    width: var(--mark-length);
+    transform: translate(-50%, -50%);
+    border-radius: var(--rail-radius);
+    background: var(--mark-idle);
+}
+
+/* The heading name, opening into the margin rather than over the text. */
+.reading-rail-stop::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 0.75rem);
+    /* Never wider than the gap to the page edge, so it cannot be clipped.
+       vw, not %: a percentage here resolves against the 12px stop, not the
+       viewport, which collapsed the label to its own padding. */
+    max-width: min(11rem, calc(25vw - var(--article-half) / 2 - 1.5rem));
+    overflow: hidden;
+    /* No box: the label sits alone in the empty margin, so a border and a
+       filled background only add weight it does not need. */
+    color: var(--color-muted);
+    font-family: var(--font-chrome);
+    font-size: var(--text-micro);
+    line-height: 1.3;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-50%) translateX(0.25rem);
+    transition:
+        opacity var(--motion) var(--ease),
+        transform var(--motion) var(--ease);
+    pointer-events: none;
+}
+
+.reading-rail-stop:hover::after,
+.reading-rail-stop:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* READING PROGRESS (PROG-H)
+   The narrow-viewport fallback: a 3px accent bar travelling an accent-tinted
+   track. Fixed to the viewport, so it reaches the end of the page rather than
+   stopping where the track runs out. */
+.reading-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+
+    /* 3px of bar, then a skirt. The track was an 18% accent tint laid straight
+       over the article, so glyphs scrolled THROUGH it — 228 distinct colours
+       inside the 3px bar at one offset, where a clean bar has three. The page
+       colour underneath makes it opaque; the skirt below dissolves text before
+       it reaches the bar rather than letting it slide under a hairline. */
+    height: 15px;
+    background:
+        linear-gradient(var(--color-accent-muted) 0 3px, transparent 3px),
+        linear-gradient(to bottom, var(--color-page) 0 6px, transparent 15px);
+
+    /* Decorative, and now 15px rather than 3px: it must not swallow taps on
+       whatever sits at the top of the page. */
+    pointer-events: none;
+}
+
+.reading-progress i {
+    display: block;
+    height: 3px;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: var(--color-accent);
+}
+
+/* HEADING ANCHORS
+   In the HTML, not injected by script. Placed after the text rather than in
+   the left margin: the article column has only the page gutter beside it at
+   narrow widths, and a hanging anchor would sit off-screen. */
+.article-content :is(h2, h3) .heading-anchor {
+    margin-left: 0.4em;
+    color: var(--color-accent);
+    font-family: var(--font-data);
+    font-size: 0.8em;
+    font-weight: 400;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity var(--motion) var(--ease);
+}
+
+.article-content :is(h2, h3):hover .heading-anchor,
+.article-content .heading-anchor:focus-visible {
+    opacity: 1;
+}
+
+/* THE LEDE
+   Body size, but noticeably tighter than body leading. Prose is set loose
+   because it is read line after line for minutes; a lede is read once, and
+   at prose leading its three lines occupy more vertical space than anything
+   else on the page and read as a wall. */
+.page-lede {
+    line-height: 1.55;
+}
+
+.typed-text {
+    color: var(--color-ink);
+}
+
+/* A word inside a phrase that the typewriter turns into a link once it has
+   finished typing it. Before that the anchor has no href, so it is inert and
+   unfocusable on its own — no styling needed to say so. */
+/* Quiet at rest, accent on hover. No underline: in an article an underline
+   is the only thing separating a link from identical prose around it, but
+   here the colour already does that work and the rule just adds noise. */
+.typed-mark {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--motion) var(--ease);
+}
+
+.typed-mark[href]:hover,
+.typed-mark[href]:focus-visible {
+    color: var(--color-accent-hi);
+}
+
+/* Hidden until the typewriter is actually running: with JS off or reduced
+   motion set there is nothing for a caret to sit after. */
+.caret {
+    display: none;
+    width: 0.5ch;
+    height: 1.05em;
+    margin-left: 0.1em;
+    border-radius: 1px;
+    background: var(--color-accent-hi);
+    vertical-align: -0.16em;
+}
+
+.caret.is-typing {
+    display: inline-block;
+}
+
+.caret.is-idle {
+    animation: caret-blink 1.05s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* SECTION LABELS
+   Not made bigger — the list titles they introduce are 19px, and a label
+   that outsizes its own content inverts the hierarchy. Made *unlike*
+   instead: the accent colour, which nothing else on the page wears as a
+   whole word, plus tracking. Size stays below the content it labels. */
+.section-label {
+    color: var(--color-accent);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+}
+
+/* YEAR HEADINGS
+   The listing groups by year so each row can drop the year from its own
+   date. Set quiet and small: it is a coordinate, not a title, and it must
+   not outrank the post titles underneath it. */
+.year-heading {
+    color: var(--color-faint);
+    font-family: var(--font-chrome);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+/* PULL QUOTE
+   The question is stated plainly and the answer takes the accent, so the
+   second line lands rather than just continuing the first. */
+.pull-quote {
+    /* not `margin: 0` — that beat the mt-section utility on the element,
+       which has the same specificity and loses on source order */
+    margin-inline: 0;
+    margin-bottom: 0;
+    color: var(--color-soft);
+    /* the display face, not the prose face: a quote set in the voice the
+       site uses for its own headings reads as the site saying it, where
+       Source Sans made it look like a stray paragraph */
+    font-family: var(--font-ui);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    text-wrap: balance;
+}
+
+.pull-quote p {
+    margin: 0;
+}
+
+.pull-quote p + p {
+    color: var(--color-accent-hi);
+}
+
+/* Curly marks, and quiet: they frame the line rather than join it. Set in
+   the element's own colour at reduced opacity so they sit behind the words
+   at both ends. */
+.pull-quote p:first-child::before {
+    content: "“";
+    margin-left: -0.55em;
+    color: var(--color-faint);
+}
+
+.pull-quote p:last-child::after {
+    content: "”";
+    margin-right: -0.55em;
+    color: var(--color-faint);
+}
+
+/* TAGS, UNBOXED
+   The # carries the accent, the word stays quiet. min-height holds a ~44px
+   tap target that draws nothing; the row's negative block margin hands the
+   reclaimed space back to the layout so the rhythm is unchanged. */
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+    margin-block: -0.75rem;
+}
+
+.tag-link {
     display: inline-flex;
     align-items: center;
-    border: 1px solid var(--color-line);
-    border-radius: 9999px;
-    background: var(--color-surface);
-    padding: 0.25rem 0.65rem;
+    min-height: 2.75rem;
     color: var(--color-muted);
-    font-size: 0.75rem;
+    font-size: var(--text-ui);
     font-weight: 600;
-    line-height: 1.25;
+    transition: color var(--motion) var(--ease);
 }
 
-.tag-pill {
-    transition:
-        border-color 160ms ease,
-        background-color 160ms ease,
-        color 160ms ease;
+/* Decorative: a tag's accessible name is the word, not the sigil. */
+.tag-link::before {
+    content: "#";
+    color: var(--color-accent);
 }
 
-.tag-pill:hover {
-    border-color: var(--color-accent);
-    background: var(--color-accent-surface);
+.tag-link:hover {
     color: var(--color-accent-hi);
 }
 
-.project-card .card-surface {
-    border-color: var(--color-line);
-    transition:
-        border-color 160ms ease,
-        background-color 160ms ease;
+/* TECHNOLOGIES
+   Mono, dot-separated. Every machine-readable field in a project row shares
+   one voice; the prose has another. */
+.tech-line {
+    /* flex-wrap, not a plain block: the items are the only break points, so a
+       long list wraps between technologies instead of inside one. */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin-top: 0.5rem;
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
 }
 
-.project-card-title {
-    transition: color 160ms ease;
+.tech-line-item {
+    white-space: nowrap;
 }
 
-.project-card:hover .card-surface {
-    border-color: var(--color-accent);
+/* Inside the item it follows, so a wrapped line ends with the separator and
+   the next line starts with a name rather than a stray dot. */
+.tech-line-dot {
+    margin: 0 0.4rem;
+}
+
+/* THE PROJECT ROW
+   Year rail left, designation right, prose spanning under both. The rail
+   reads down the left edge as a timeline, which is the question a stranger
+   asks first. */
+.project-list {
+    border-top: 1px solid var(--color-line);
+}
+
+.project-row {
+    position: relative;
+    /* so the highlight below can sit at z-index -1 without escaping the row */
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: 6rem 1fr auto;
+    align-items: baseline;
+    gap: 0.125rem 1.375rem;
+    margin-inline: -0.625rem;
+    padding: 1rem 0.625rem 1.0625rem;
+}
+
+/* The highlight bleeds wider than the rule above it, so a rounded corner
+   stuck out past the end of the line on hover. Rather than square it off and
+   pull the whole row in, it fades out horizontally — there is no corner to
+   see, and the rail and designation keep their alignment. It is a separate
+   layer because a gradient background cannot be transitioned. */
+.project-row::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
     background: var(--color-accent-surface);
+    /* Eased at both ends rather than a straight ramp. A linear fade meets
+       full opacity at a hard angle, and the eye reads that junction as a
+       crease — worse here because the fill is only 8% alpha, so the whole
+       ramp spans a handful of RGB levels and every step is visible. These
+       stops approximate a smoothstep, so the slope arrives at zero at both
+       the transparent end and the opaque one. */
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(0, 0, 0, 0.03) 3%,
+        rgba(0, 0, 0, 0.12) 6%,
+        rgba(0, 0, 0, 0.3) 10%,
+        rgba(0, 0, 0, 0.55) 14%,
+        rgba(0, 0, 0, 0.78) 17%,
+        rgba(0, 0, 0, 0.93) 20%,
+        #000 24%,
+        #000 76%,
+        rgba(0, 0, 0, 0.93) 80%,
+        rgba(0, 0, 0, 0.78) 83%,
+        rgba(0, 0, 0, 0.55) 86%,
+        rgba(0, 0, 0, 0.3) 90%,
+        rgba(0, 0, 0, 0.12) 94%,
+        rgba(0, 0, 0, 0.03) 97%,
+        transparent 100%
+    );
+    opacity: 0;
+    transition: opacity var(--motion) var(--ease);
 }
 
-.project-card:hover .project-card-title {
+.project-row:hover::before {
+    opacity: 1;
+}
+
+/* The divider is a pseudo-element, not the row's own border: the row is
+   wider than the text column and has a corner radius so the hover wash has
+   breathing room, and a border on it inherited both — overhanging the
+   content and visibly curving at each end. */
+.project-row::after {
+    content: "";
+    position: absolute;
+    right: 0.625rem;
+    bottom: 0;
+    left: 0.625rem;
+    border-bottom: 1px solid var(--color-line);
+}
+
+/* On /projects the footer follows the list directly, so the list ends on the
+   footer's rule instead of drawing a second one just above it. The homepage
+   keeps its own closing rule, because a section follows it there. */
+.project-list-flush .project-row:last-child::after {
+    content: none;
+}
+
+.project-row-rail {
+    color: var(--color-faint);
+    font-family: var(--font-chrome);
+    font-weight: 500;
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.project-row-name {
+    color: var(--color-ink);
+    font-size: var(--text-subhead);
+    font-weight: 600;
+    transition: color var(--motion) var(--ease);
+}
+
+.project-row:hover .project-row-name {
     color: var(--color-accent-hi);
+}
+
+.project-row-designation {
+    color: var(--color-faint);
+    font-family: var(--font-chrome);
+    font-weight: 500;
+    font-size: var(--text-micro);
+    white-space: nowrap;
+}
+
+.project-row-sep {
+    display: none;
+    margin-right: 0.5rem;
+}
+
+.project-row-body {
+    grid-column: 2 / -1;
+}
+
+.project-row-description {
+    display: block;
+    margin-top: 0.3125rem;
+    max-width: 56ch;
+    color: var(--color-muted);
+    font-family: var(--font-copy);
+    font-size: var(--text-meta);
+    /* Off-scale on purpose: at 1.65 a two-line description sat close enough
+       to the tech line under it that the block read as crowded. The worst
+       case is the longest title, which is where this shows first. */
+    line-height: 1.8;
+}
+
+/* Narrow: the rail and the designation share one line above the title
+   rather than squeezing a 6rem column out of a 20rem viewport. */
+@media (width < 40rem) {
+    .project-row {
+        grid-template-columns: auto 1fr;
+        column-gap: 0.5rem;
+    }
+
+    .project-row-rail {
+        grid-area: 1 / 1;
+    }
+
+    /* Pinned to opposite edges these left a 260px void between them on a
+       phone. Set next to each other they read as one metadata line, the same
+       shape the article header and the post previews already use. */
+    .project-row-designation {
+        grid-area: 1 / 2;
+        justify-self: start;
+    }
+
+    .project-row-sep {
+        display: inline;
+    }
+
+    .project-row-name {
+        grid-area: 2 / 1 / 2 / -1;
+        margin-top: 0.25rem;
+    }
+
+    .project-row-body {
+        grid-area: 3 / 1 / 3 / -1;
+    }
 }
 
 :focus-visible {
@@ -149,39 +855,75 @@ body {
     font-style: normal;
 }
 
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* THE CAT
+   One image, one cursor. 32px because that is the platform's native cursor
+   size and Chrome refuses anything over 128. The hotspot sits on the
+   fingertips, so the hand hangs down-right of the pointer the way the default
+   arrow does. Safari does not honour image cursors from CSS in every case, so
+   grab is the fallback. */
+.article-content img[src*="happycat"] {
+    cursor: url("/cursors/swipe.png") 9 4, grab;
+}
+
 /* ARTICLE MARKDOWN STYLING */
 
 .article-content {
     color: var(--color-soft);
-    font-family:
-        "Source Sans 3 Variable",
-        "Source Sans 3",
-        ui-sans-serif,
-        system-ui,
-        sans-serif;
-    font-size: 1.05rem;
+    font-family: var(--font-copy);
+    font-size: var(--text-body);
     font-weight: 400;
-    line-height: 1.9;
+    line-height: var(--text-body--line-height);
 }
 
+/* Block separation has to beat the line gap inside a block or paragraphs
+   do not read as separate. At 1.7 leading on 18.4px the line gap is 31px,
+   so 24px of margin puts block-to-block at 55px — 1.77x the line gap. At
+   the old 1.85/20px it was 1.59x and the paragraphs ran together. */
 .article-content>*+* {
-    margin-top: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+/* A heading belongs to what follows it, so it sits far from the block above
+   and close to the block below. Without this the gap was 40px above and
+   24px below — near enough to symmetric that headings floated. */
+.article-content :is(h2, h3, h4, h5, h6)+* {
+    margin-top: 0.75rem;
+}
+
+/* Headings take the UI face wherever they appear. Inside the article they
+   were inheriting the prose face from the container, which made the only
+   headings on the site that did not share a voice with the rest of it.
+   h4-h6 are unused today and covered so they cannot drift later. */
+.article-content :is(h2, h3, h4, h5, h6) {
+    font-family: var(--font-ui);
 }
 
 .article-content h2 {
-    margin-top: 2.5rem;
+    margin-top: 3.5rem;
     color: var(--color-ink);
-    font-size: 1.5rem;
-    line-height: 1.3;
+    font-size: var(--text-title);
+    line-height: var(--text-title--line-height);
     font-weight: 600;
     letter-spacing: -0.025em;
 }
 
 .article-content h3 {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     color: var(--color-ink);
-    font-size: 1.2rem;
-    line-height: 1.4;
+    font-size: var(--text-heading);
+    line-height: var(--text-heading--line-height);
     font-weight: 600;
 }
 
@@ -192,11 +934,11 @@ body {
 .article-content a {
     color: var(--color-ink);
     text-decoration-line: underline;
-    text-decoration-color: rgba(105, 105, 207, 0.45);
+    text-decoration-color: var(--color-accent-muted);
     text-underline-offset: 0.18em;
     transition:
-        color 160ms ease,
-        text-decoration-color 160ms ease;
+        color var(--motion) var(--ease),
+        text-decoration-color var(--motion) var(--ease);
 }
 
 .article-content a:hover {
@@ -238,17 +980,20 @@ body {
 
 .article-content code {
     border: 1px solid var(--color-line);
-    border-radius: 0.35rem;
+    border-radius: var(--radius-token);
     background: var(--color-surface);
     padding: 0.15rem 0.35rem;
     color: var(--color-ink);
-    font-size: 0.9em;
+    font-family: var(--font-data);
+    font-size: 0.85em;
 }
 
+/* The !important is load-bearing: it suppresses the Shiki theme's own
+   inline background. It must survive any edit to this rule. */
 .article-content pre {
     overflow-x: auto;
     border: 1px solid var(--color-line);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-panel);
     background: var(--color-surface) !important;
     padding: 1rem;
 }
@@ -287,14 +1032,14 @@ body {
 .article-content p:has(> img)+p em {
     display: block;
     color: var(--color-faint);
-    font-size: 0.875rem;
+    font-size: var(--text-ui);
     line-height: 1.6;
     text-align: center;
 }
 
 .article-content .callout {
     border: 1px solid var(--color-line);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-panel);
     background: var(--color-surface);
     padding: 1rem 1.25rem;
     color: var(--color-soft);
@@ -304,9 +1049,12 @@ body {
     margin-top: 0.75rem;
 }
 
+/* A 15px label rather than a heading, so it takes the chrome face like
+   every other label on the site — not the UI face the headings use. */
 .article-content .callout-title {
     color: var(--color-ink);
-    font-size: 0.875rem;
+    font-family: var(--font-chrome);
+    font-size: var(--text-ui);
     font-weight: 600;
     text-transform: lowercase;
 }
@@ -317,4 +1065,227 @@ body {
 
 .article-content .callout>*:last-child {
     margin-bottom: 0;
+}
+
+/* THE "RIGHT NOW" GRID
+   Four facts in one key column. The registers stopped fighting once these
+   stopped being separate lines and became rows of one table. */
+.now-grid {
+    display: grid;
+    gap: 0.4375rem;
+    margin: 0;
+}
+
+.now-grid>div,
+.now-row {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+}
+
+/* Stacked labels on phones. A side column cannot hold the longest phrase at
+   any phone width (339.3px of text against a 266px column at 402px), so the
+   label goes above and the value takes the full 362px. */
+@media (width < 40rem) {
+
+    .now-grid {
+        gap: 1rem;
+    }
+
+    .now-grid>div,
+    .now-row {
+        grid-template-columns: 1fr;
+        gap: 0.0625rem;
+    }
+}
+
+.now-grid dt,
+.now-row [data-now-label] {
+    color: var(--color-faint);
+    font-family: var(--font-chrome);
+    font-size: var(--text-ui);
+}
+
+.now-grid dd {
+    margin: 0;
+    color: var(--color-soft);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+}
+
+/* The typed row is sized and coloured exactly like the other three. The
+   caret is already the thing that says "this one is live" — making it
+   brighter and larger as well was emphasis left over from when this was a
+   sentence instead of a row, and it broke the column it now belongs to. */
+
+/* The now-playing row is a dt/dd pair like the others, so it inherits the
+   column and the value styling above; only the icon needs placing beside the
+   track. It was a div of loose spans before, which is not valid inside a dl
+   and needed explicit grid areas to look right at all. */
+/* The typed row reserves the height of its tallest phrase by stacking every
+   phrase in one grid cell. Only the live line is visible; the hidden copies
+   exist to be measured, which is why the reservation follows the viewport
+   instead of a hardcoded two lines. */
+.typed-cell {
+    display: grid;
+}
+
+.typed-cell>* {
+    grid-area: 1 / 1;
+}
+
+.typed-ghost {
+    visibility: hidden;
+}
+
+/* Both the ghosts and the live line take their size from `.now-grid dd`. An
+   earlier `.typed-line` rule here, left over from when this was a standalone
+   sentence rather than a row of the grid, set the live copy to 17px/1.72
+   while the ghosts inherited 13px/1.5 — so the ghosts measured a different
+   line than the one on screen and reserved too little. */
+.typed-live {
+    display: block;
+}
+
+/* A ghost holds the same markup as the live line, caret included, so the two
+   wrap identically. Hand-copying the caret's metrics onto a pseudo-element
+   was not enough: the caret is a 1.05em inline-block below the baseline and
+   it grows the line box it sits in, so a mirror that got the width right
+   still under-reserved the live line by a whole line. */
+.typed-ghost .caret {
+    display: inline-block;
+}
+
+.now-value {
+    display: flex;
+    /* min-width:0 so the track can shrink and ellipsis instead of forcing the
+       row wider than its column */
+    min-width: 0;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* THE SPECIMENS
+   The palette and the type scale, set in themselves. Every chip is painted
+   with the live token and every sample line is rendered at its own step, so
+   what is on screen IS the system rather than a picture of it. */
+.swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.swatch {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.swatch-chip {
+    background: var(--chip);
+    display: block;
+    height: 3.5rem;
+    border-radius: 0.375rem;
+    /* A hairline, or --color-page reads as a hole rather than a swatch. */
+    box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+/* A translucent token over the page colour is indistinguishable from the
+   page. Split the chip so the alpha is legible against both ends.
+   The token is painted ON TOP of the split, never under it: as a background
+   layer it sat beneath an opaque gradient and every chip read as a bare
+   page/ink block with no tint at all. */
+.swatch-chip.is-layered {
+    background: linear-gradient(
+        to right,
+        var(--color-page) 0 50%,
+        var(--color-ink) 50% 100%
+    );
+    position: relative;
+    overflow: hidden;
+}
+
+.swatch-chip.is-layered::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--chip);
+}
+
+.swatch-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1875rem;
+}
+
+.swatch-name {
+    color: var(--color-soft);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+}
+
+.swatch-value {
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+}
+
+.swatch-note,
+.specimen-note {
+    margin-top: 0.25rem;
+    color: var(--color-muted);
+    font-family: var(--font-copy);
+    font-size: var(--text-micro);
+    line-height: 1.6;
+}
+
+.specimen {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+}
+
+.specimen-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--color-line);
+    padding: 1.125rem 0;
+}
+
+.specimen-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.specimen-name {
+    color: var(--color-accent-hi);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+}
+
+.specimen-value {
+    color: var(--color-faint);
+    font-family: var(--font-data);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+/* The point of the row. It must be free to be as tall as its own step. */
+.specimen-sample {
+    display: block;
+    color: var(--color-ink);
+    /* A display step is wider than a phone; let it shrink rather than push
+       the page sideways. */
+    overflow-wrap: anywhere;
 }

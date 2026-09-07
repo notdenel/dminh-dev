@@ -1,0 +1,28 @@
+---
+// Each technology carries its own trailing separator so the two can never be
+// split apart, and the whole item is unbreakable. Before this the only break
+// opportunities in the line were the spaces INSIDE names, so "ROS 2" wrapped
+// across two lines and, at 320px, "Raspberry Pi" ran 32px past the viewport.
+type Props = {
+    technologies: string[];
+};
+
+const { technologies } = Astro.props;
+---
+
+{
+    technologies.length > 0 && (
+        <span class="tech-line">
+            {technologies.map((technology, index) => (
+                <span class="tech-line-item">
+                    {technology}
+                    {index < technologies.length - 1 && (
+                        <span class="tech-line-dot" aria-hidden="true">
+                            •
+                        </span>
+                    )}
+                </span>
+            ))}
+        </span>
+    )
+}

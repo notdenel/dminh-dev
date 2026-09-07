@@ -26,12 +26,19 @@ const navLinks = [
 ];
 ---
 
- <header class="mb-16 flex flex-col items-start gap-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+<!-- One row wherever it fits. The wrap is the fallback, not the mobile
+     layout: title + nav measure 327px against 362 at 402px and 335 at 375px,
+     so every current phone gets a single line and only a 360px-or-narrower
+     screen drops the nav to its own row. flex-wrap does that on its own, so
+     there is no breakpoint here to keep in sync with the type. -->
+<header class="mb-16 flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-2 text-ui sm:gap-x-6">
   <a href="/" class="site-link-strong font-semibold tracking-tight">
     dminh.dev
   </a>
 
-   <nav class="font-semibold flex flex-wrap items-center gap-x-4 gap-y-2">
+  <!-- Tighter between links on a phone: it buys the 12px that keeps the
+       single row alive down to 360px. -->
+  <nav class="font-semibold flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
     {
       navLinks.map((link) => {
         const active = isActive(link.href);

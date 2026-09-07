@@ -1,16 +1,43 @@
 ---
 import SocialIconLink from "./SocialIconLink.astro";
+import { buildCommit, buildCommitUrl } from "../utils/buildInfo";
 
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="mt-20 border-t border-line pt-6 text-sm font-semibold text-muted">
+<footer class="mt-section border-t border-line pt-6 text-ui font-semibold text-muted">
+  <!-- Opposite ends at every width that can hold them: the two halves measure
+       328px against 335 at 375px, so only a 360px-or-narrower screen drops the
+       icons to their own line. Same flex-wrap fallback as the header, so the
+       two agree instead of each having its own breakpoint. -->
   <div
-    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+    class="flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-3"
   >
-    <p>&copy; {currentYear} Daniel Sims</p>
+    <p class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <span>&copy; {currentYear} Daniel Sims</span>
 
-    <div class="flex items-center gap-4">
+      {
+        buildCommit && (
+          <>
+            <span class="metadata-separator" aria-hidden="true">
+              •
+            </span>
+            <a
+              href={buildCommitUrl}
+              class="site-link font-data text-micro font-normal tabular-nums"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="the commit this build came from"
+            >
+              {buildCommit}
+            </a>
+          </>
+        )
+      }
+    </p>
+
+    <!-- Tighter on a phone, for the same 8px that keeps the row alive at 360px. -->
+    <div class="flex items-center gap-3 sm:gap-4">
       <SocialIconLink
         href="https://github.com/notdenel"
         label="GitHub"

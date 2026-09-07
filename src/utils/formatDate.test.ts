@@ -4,6 +4,8 @@ import {
   formatDisplayDate,
   formatMonthYear,
   formatMonthYearRange,
+  formatYearRail,
+  formatDayMonth,
 } from "./formatDate.ts";
 
 // new Date("2026-07-11") is midnight UTC, so the day-shift assertion below can
@@ -42,4 +44,31 @@ test("formatMonthYearRange renders a closed range", () => {
 
 test("formatMonthYearRange returns undefined without a start date", () => {
   assert.equal(formatMonthYearRange(undefined, "2026-06"), undefined);
+});
+
+// The project year rail is a timeline, not a date: it answers "when" at a
+// glance, so it collapses to the least text that still says it.
+test("formatYearRail marks an unfinished project with an open range", () => {
+  assert.equal(formatYearRail("2025-06"), "2025—");
+});
+
+test("formatYearRail collapses a same-year range to the single year", () => {
+  assert.equal(formatYearRail("2026-03", "2026-06"), "2026");
+});
+
+test("formatYearRail abbreviates the end of a multi-year range", () => {
+  assert.equal(formatYearRail("2025-09", "2026-06"), "2025–26");
+});
+
+test("formatYearRail returns undefined without a start date", () => {
+  assert.equal(formatYearRail(undefined, "2026-06"), undefined);
+});
+
+test("formatDayMonth drops the year for a post under a year heading", () => {
+  assert.equal(formatDayMonth(new Date("2026-07-11")), "Jul 11");
+  assert.equal(formatDayMonth(new Date("2026-09-01")), "Sept 1");
+});
+
+test("formatDayMonth does not shift the day in negative UTC offsets", () => {
+  assert.equal(formatDayMonth(new Date("2026-01-01")), "Jan 1");
 });

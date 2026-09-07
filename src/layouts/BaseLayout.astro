@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { buildCommit } from "../utils/buildInfo";
 
 type Props = {
   title?: string;
@@ -18,10 +19,23 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Both of these exist to paint the page dark as early as possible.
+         The meta applies before any stylesheet arrives; the inline rule
+         paints the background before the external sheet does. Unconfirmed
+         as the cause of the navigation flash — it could not be reproduced
+         here across eight navigation paths — but it is the documented fix
+         for a dark page flashing white before its CSS lands. -->
+    <meta name="color-scheme" content="dark" />
+    <style is:inline>
+      html {
+        background: #101014;
+      }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=5" />
     <link rel="canonical" href={canonicalUrl} />
 
     <meta property="og:type" content="website" />
@@ -39,12 +53,26 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
     <title>{title}</title>
   </head>
 
-  <body class="min-h-screen antialiased">
+  <body class="min-h-screen antialiased" data-build-commit={buildCommit}>
     <div
       class="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-5 py-6 sm:px-6 sm:py-8"
     >
       <slot />
     </div>
+
+    <!-- for anyone who opens the console -->
+    <script>
+      // bundled rather than `is:inline` so the CSP can hash it; the commit
+      // rides in on a data attribute because `define:vars` forces it inline.
+      const commit = document.body.dataset.buildCommit || "an unknown commit";
+      console.log(
+        `%cdminh.dev%c
+built from ${commit} · github.com/notdenel/dminh-dev\n
+if you're reading this, we'd probably get along :>\n\nsay hi: dminhsims@gmail.com`,
+        "color:#aa8ee1;font:600 15px ui-sans-serif,system-ui,sans-serif",
+        "color:#878899;font:13px ui-monospace,monospace",
+      );
+    </script>
 
     <!-- global script to handle back buttons across site -->
     <script>

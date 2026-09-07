@@ -1,0 +1,12 @@
+/* team */
+    developer: daniel sims
+    site: dminh.dev
+    github: @notdenel
+    location: san jose, ca, usa
+
+/* site */
+    doctype: html5
+    standards: html5, css3
+    components: astro, tailwind css
+    typefaces: jost, source sans 3, ibm plex mono
+    ide: vscode
