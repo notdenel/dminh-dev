@@ -3,7 +3,7 @@
 // The chip is painted with the live `var(--token)` and the label is the value
 // parsed from the same file, so a retuned colour moves both at once and there
 // is no second copy to go stale.
-import { readFileSync } from "node:fs";
+import globalCss from "../styles/global.css?raw";
 import { parseTokens, resolveToken } from "../utils/designTokens";
 
 type Props = {
@@ -12,9 +12,7 @@ type Props = {
 
 const { group } = Astro.props;
 
-const tokens = parseTokens(
-    readFileSync("src/styles/global.css", "utf8"),
-);
+const tokens = parseTokens(globalCss);
 
 const GROUPS = {
     // The ramp, light to dark. 500 is the one the site actually wears.
@@ -58,7 +56,7 @@ if (missing.length) {
             <li class="swatch">
                 <span
                     class:list={["swatch-chip", swatch.layered && "is-layered"]}
-                    style={`background: var(${swatch.name})`}
+                    style={`--chip: var(${swatch.name})`}
                     aria-hidden="true"
                 />
 

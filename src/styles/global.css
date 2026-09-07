@@ -768,6 +768,11 @@ body {
     white-space: nowrap;
 }
 
+.project-row-sep {
+    display: none;
+    margin-right: 0.5rem;
+}
+
 .project-row-body {
     grid-column: 2 / -1;
 }
@@ -805,9 +810,8 @@ body {
         justify-self: start;
     }
 
-    .project-row-designation::before {
-        content: "•";
-        margin-right: 0.5rem;
+    .project-row-sep {
+        display: inline;
     }
 
     .project-row-name {
@@ -1059,9 +1063,9 @@ body {
     align-items: baseline;
 }
 
-/* CANDIDATE A — stacked labels on phones. A side column cannot hold the
-   longest phrase at any phone width (288.7px of text against a 266px column
-   at 402px), so the label goes above and the value takes the full 362px. */
+/* Stacked labels on phones. A side column cannot hold the longest phrase at
+   any phone width (339.3px of text against a 266px column at 402px), so the
+   label goes above and the value takes the full 362px. */
 @media (width < 40rem) {
 
     .now-grid {
@@ -1162,6 +1166,7 @@ body {
 }
 
 .swatch-chip {
+    background: var(--chip);
     display: block;
     height: 3.5rem;
     border-radius: 0.375rem;
@@ -1170,13 +1175,16 @@ body {
 }
 
 /* A translucent token over the page colour is indistinguishable from the
-   page. Split the chip so the alpha is legible against both ends. */
+   page. Split the chip so the alpha is legible against both ends.
+   The token is painted ON TOP of the split, never under it: as a background
+   layer it sat beneath an opaque gradient and every chip read as a bare
+   page/ink block with no tint at all. */
 .swatch-chip.is-layered {
-    background-image: linear-gradient(
+    background: linear-gradient(
         to right,
         var(--color-page) 0 50%,
         var(--color-ink) 50% 100%
-    ) !important;
+    );
     position: relative;
     overflow: hidden;
 }
@@ -1185,7 +1193,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: inherit;
+    background: var(--chip);
 }
 
 .swatch-meta {

@@ -1,16 +1,22 @@
 ---
 // The type scale, set in itself. Each row is rendered at its own token so the
 // specimen is the scale rather than a description of it.
-import { readFileSync } from "node:fs";
+import globalCss from "../styles/global.css?raw";
 import { parseTokens, tokensMatching } from "../utils/designTokens";
 
-const tokens = parseTokens(readFileSync("src/styles/global.css", "utf8"));
+const tokens = parseTokens(globalCss);
 
 // --text-<name> is a step; --text-<name>--line-height is that step's leading,
 // which belongs beside it rather than as a row of its own.
 const steps = tokensMatching(tokens, "--text-").filter(
     (token) => !token.name.endsWith("--line-height"),
 );
+
+// Guard against a rename in global.css silently emptying the block, the same
+// way PaletteSwatches does — an empty specimen still builds green.
+if (!steps.length) {
+    throw new Error("TypeSpecimen: no --text- steps found in global.css");
+}
 
 // Which face each step is worn in, matching how the site uses them.
 const FACE: Record<string, string> = {

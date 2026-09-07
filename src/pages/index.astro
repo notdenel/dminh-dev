@@ -40,8 +40,9 @@ const featuredProjects = (await getCollection("projects"))
           <dd class="typed-cell">
             {/* Every phrase, stacked in the same grid cell and hidden, so the
                 cell is always as tall as the longest one AT THE CURRENT WIDTH
-                and the three rows below never move. At 402px four of the eight
-                phrases wrap to two lines, so the row jumped on most changes.
+                and the three rows below never move. At 375px and below the
+                longer phrases wrap to two lines, so the row jumped on most
+                changes.
                 Reserving by measurement rather than a fixed height means a
                 phrase added later is accounted for on its own. */}
             {
