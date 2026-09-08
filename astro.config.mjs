@@ -11,7 +11,11 @@ export default defineConfig({
   // Every page stays prerendered. The adapter exists for exactly one route,
   // /api/now-playing, which opts out with `export const prerender = false`
   // because it needs the Spotify secret at request time.
-  adapter: vercel(),
+  //
+  // webAnalytics injects a head-inline loader for /_vercel/insights/script.js.
+  // Both stay same-origin, and Astro hashes the injected script, so the CSP
+  // below covers it without loosening script-src.
+  adapter: vercel({ webAnalytics: { enabled: true } }),
 
   // Astro hashes the scripts it bundles, so script-src needs no 'unsafe-inline'.
   // style-src keeps it: the anti-flash `<style is:inline>` in BaseLayout has to
