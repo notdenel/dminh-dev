@@ -72,10 +72,6 @@
                     ? `${data.artist} — ${data.title}`
                     : data.title;
 
-                // The line is clipped with an ellipsis when it is too long for
-                // the column, so keep the whole thing reachable on hover.
-                track.title = track.textContent ?? "";
-
                 if (typeof data.url === "string" && data.url.startsWith("https://open.spotify.com/")) {
                     track.href = data.url;
                 } else {
@@ -83,6 +79,17 @@
                 }
 
                 row.hidden = false;
+
+                // The tooltip renders in the OS UI font, not the site's, so
+                // repeating the track there just showed the same string set
+                // differently. It says what the link does instead — except
+                // when the column has clipped the name, where reaching the
+                // whole thing still matters more. Measured after the row is
+                // shown: a hidden element has no width to compare.
+                track.title =
+                    track.scrollWidth > track.clientWidth
+                        ? (track.textContent ?? "")
+                        : "Open in Spotify";
             })
             .catch(() => {
                 // Deliberately silent. The line stays hidden.
