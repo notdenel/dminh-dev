@@ -12,9 +12,11 @@ export default defineConfig({
   // /api/now-playing, which opts out with `export const prerender = false`
   // because it needs the Spotify secret at request time.
   //
-  // webAnalytics injects a head-inline loader for /_vercel/insights/script.js.
-  // Both stay same-origin, and Astro hashes the injected script, so the CSP
-  // below covers it without loosening script-src.
+  // webAnalytics injects a head-inline loader. In a build it fetches
+  // /_vercel/insights/script.js, same-origin, and Astro hashes the injected
+  // script itself — so the CSP below covers both without loosening
+  // script-src. Only `astro dev` reaches cdn.vercel-insights.com, and dev
+  // emits no CSP meta at all, so that path is unpoliced rather than blocked.
   adapter: vercel({ webAnalytics: { enabled: true } }),
 
   // Astro hashes the scripts it bundles, so script-src needs no 'unsafe-inline'.

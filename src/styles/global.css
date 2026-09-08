@@ -749,13 +749,16 @@ body {
    mask-composite the second layer would add rather than multiply, and the
    fade would read as a hard-edged block. */
 @supports (mask-composite: intersect) and
-    (background: color-mix(in srgb, red 50%, transparent)) {
+    (background: rgb(from red r g b / calc(alpha / 2))) {
     .project-row::before {
         /* Noise can only ever subtract here — it multiplies the mask — so the
            mean alpha lands at 1 - amplitude/2 and the wash would read 15%
-           weaker than its token says. Pre-dividing by that puts it back:
-           the plateau measures 34.121 on blue against 34.000 undithered. */
-        background: color-mix(in srgb, var(--color-accent-500) 9.41%, transparent);
+           weaker than its token says. Dividing the token's own alpha by that
+           mean puts it back: the plateau measures 34.121 on blue against
+           34.000 undithered. Derived from the token rather than restated as
+           0.0941, so the colophon's swatch and this surface cannot drift. */
+        background: rgb(from var(--color-accent-surface) r g b /
+                calc(alpha / 0.85));
         mask-image: var(--wash-fade),
             url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0 0 0 0.7'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
         mask-composite: intersect;
