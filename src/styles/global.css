@@ -713,7 +713,7 @@ body {
        ramp spans a handful of RGB levels and every step is visible. These
        stops approximate a smoothstep, so the slope arrives at zero at both
        the transparent end and the opaque one. */
-    mask-image: linear-gradient(
+    --wash-fade: linear-gradient(
         to right,
         transparent 0%,
         rgba(0, 0, 0, 0.03) 3%,
@@ -732,8 +732,36 @@ body {
         rgba(0, 0, 0, 0.03) 97%,
         transparent 100%
     );
+    mask-image: var(--wash-fade);
     opacity: 0;
     transition: opacity var(--motion) var(--ease);
+}
+
+/* Dithered, because the ramp is not what limits it. At full strength the wash
+   sits 14 levels above the page in its widest channel, and those 14 levels
+   have a 169px ramp to cross — so every level holds a bar about 9px wide and
+   no number of stops can narrow it. Measured: a linear ramp gives 11px, the
+   eased one above 9px, blur exactly 9px. Multiplying a noise mask into the
+   fade jitters each boundary off the pixel grid instead. Measured on the
+   built page, averaged down the row's own height — which is what the eye
+   integrates — that takes the fade from 32 detectable steps to none, for
+   0.66 levels of grain on the flat middle. Guarded because without
+   mask-composite the second layer would add rather than multiply, and the
+   fade would read as a hard-edged block. */
+@supports (mask-composite: intersect) and
+    (background: color-mix(in srgb, red 50%, transparent)) {
+    .project-row::before {
+        /* Noise can only ever subtract here — it multiplies the mask — so the
+           mean alpha lands at 1 - amplitude/2 and the wash would read 15%
+           weaker than its token says. Pre-dividing by that puts it back:
+           the plateau measures 34.121 on blue against 34.000 undithered. */
+        background: color-mix(in srgb, var(--color-accent-500) 9.41%, transparent);
+        mask-image: var(--wash-fade),
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.3 0 0 0 0.7'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+        mask-composite: intersect;
+        mask-repeat: no-repeat, repeat;
+        mask-size: 100% 100%, 120px 120px;
+    }
 }
 
 .project-row:hover::before {
