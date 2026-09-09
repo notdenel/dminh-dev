@@ -46,6 +46,28 @@
     const track = document.querySelector<HTMLAnchorElement>("[data-now-track]");
 
     if (row && label && track) {
+        // The tooltip renders in the OS UI font, not the site's, so repeating
+        // the track there only showed the same string set differently. It
+        // names the action instead — but only while there is a link to
+        // follow, and only while the column has not clipped the name, where
+        // reading the whole thing beats naming the obvious.
+        const describe = () => {
+            if (track.scrollWidth > track.clientWidth) {
+                track.title = track.textContent ?? "";
+            } else if (track.hasAttribute("href")) {
+                track.title = "Open in Spotify";
+            } else {
+                // Spotify local files carry no public URL, so the link is
+                // gone and there is no action left to name.
+                track.removeAttribute("title");
+            }
+        };
+
+        // The clipping test depends on the column width, and a resize moves
+        // it long after the poll that measured it — 566px of track column at
+        // 1280 against 472px at 700.
+        window.addEventListener("resize", describe);
+
         const read = () =>
             // no-store, not just a short max-age: a reload otherwise renders
             // straight from the browser cache and shows the previous track
@@ -72,10 +94,6 @@
                     ? `${data.artist} — ${data.title}`
                     : data.title;
 
-                // The line is clipped with an ellipsis when it is too long for
-                // the column, so keep the whole thing reachable on hover.
-                track.title = track.textContent ?? "";
-
                 if (typeof data.url === "string" && data.url.startsWith("https://open.spotify.com/")) {
                     track.href = data.url;
                 } else {
@@ -83,6 +101,10 @@
                 }
 
                 row.hidden = false;
+
+                // After the row is shown: a hidden element has no width, so
+                // the clipping test would read 0 > 0 and always lose.
+                describe();
             })
             .catch(() => {
                 // Deliberately silent. The line stays hidden.

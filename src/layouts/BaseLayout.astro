@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { buildCommit } from "../utils/buildInfo";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
 type Props = {
   title?: string;
@@ -54,6 +55,12 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
   </head>
 
   <body class="min-h-screen antialiased" data-build-commit={buildCommit}>
+    {/* Web Analytics rides in through the adapter, but Speed Insights has
+        no adapter option left — its own component ships a bundled script, so
+        the CSP hashes it like any other. Same-origin in a build; only
+        `astro dev` reaches va.vercel-scripts.com, and dev emits no CSP. */}
+    <SpeedInsights />
+
     <div
       class="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-5 py-6 sm:px-6 sm:py-8"
     >
